@@ -6,7 +6,7 @@ description = "astroships"
 license = "?"
 
 # Deps
-requires "nim >= 1.4.0"
+requires "nim >= 1.2.6"
 requires "nico >= 0.3.1"
 
 srcDir = "src"
