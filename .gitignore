@@ -1,2 +1,5 @@
-astroships
-astroships.js
+*
+!/**/
+!*.*
+*.out
+*.js
