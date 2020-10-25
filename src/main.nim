@@ -3,16 +3,18 @@ import nico
 var buttonDown = false
 
 proc gameInit() =
-  loadFont(0, "font.png")
+  var pal = loadPaletteFromGPL("palette.gpl")
+  loadSpritesheet(1, "sprites/explosion_sheet.png", 32, 32)
+  setPalette(pal)
 
 proc gameUpdate(dt: float32) =
   buttonDown = btn(pcA)
 
 proc gameDraw() =
   cls()
-  setColor(if buttonDown: 7 else: 3)
-  printc("hello world", screenWidth div 2, screenHeight div 2)
+  setSpritesheet(1)
+  spr(3, 20, 20)
 
-nico.init("myOrg", "myApp")
-nico.createWindow("myApp", 128, 128, 4, false)
+nico.init("nimtendo", "ASTROSHIPS")
+nico.createWindow("ASTROSHIPS", 128, 128, 4, false)
 nico.run(gameInit, gameUpdate, gameDraw)
