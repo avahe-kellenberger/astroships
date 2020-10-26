@@ -8,6 +8,10 @@ import
   entity,
   animation
 
+export
+  entity,
+  animation
+
 type AnimatedEntity* = ref object of Entity
   spritesheetIndex*: int
   animations: Table[string, Animation]
