@@ -18,7 +18,7 @@ template `or`*(flagsA, flagsB: LayerObjectFlags): bool =
 type Entity* = ref object of RootObj
   flags*: LayerObjectFlags
 
-proc newGameObject*(flags: LayerObjectFlags): Entity =
+proc newEntity*(flags: LayerObjectFlags): Entity =
   Entity(flags: flags)
 
 method update*(this: Entity, deltaTime: float) {.base.} = discard
