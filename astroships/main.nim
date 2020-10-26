@@ -39,7 +39,7 @@ proc gameDraw() =
 
   explosion.render()
 
-  if (mousebtn(0)):
+  if (mousebtnp(0)):
     explosion.resetAnimation()
 
 
