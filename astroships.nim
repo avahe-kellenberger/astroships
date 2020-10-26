@@ -1,3 +1,14 @@
-import astroships/api/[scene, layer, entity]
-export scene, layer, entity
+import astroships/api/
+[
+  scene,
+  layer,
+  entity,
+  animation
+]
+
+export
+  scene,
+  layer,
+  entity,
+  animation
 
