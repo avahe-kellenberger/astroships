@@ -1,18 +1,36 @@
-import nico
+import nico, objects/explosion as exp
 
-var buttonDown = false
+nico.init("nico", "ASTROSHIPS")
+nico.createWindow("ASTROSHIPS", 128, 128, 4)
+fixedSize(true)
+integerScale(true)
+
+var
+  buttonDown = false
+  frame = 0
+  astroPal = loadPaletteFromGPL("pal/astroships.gpl")
+  explosion: Explosion
 
 proc gameInit() =
-  loadFont(0, "font.png")
+  setPalette(astroPal)
+  explosion = newExplosion(32, 15)
 
 proc gameUpdate(dt: float32) =
+  frame += 1
   buttonDown = btn(pcA)
+  explosion.rotation += 0.005
+  explosion.update(dt)
 
 proc gameDraw() =
   cls()
-  setColor(if buttonDown: 7 else: 3)
-  printc("hello world", screenWidth div 2, screenHeight div 2)
 
-nico.init("myOrg", "myApp")
-nico.createWindow("myApp", 128, 128, 4, false)
+  setColor(1)
+  print("click for explosion!", 10, 10)
+
+  explosion.render()
+
+  if (mousebtnp(0)):
+    explosion.resetAnimation()
+
 nico.run(gameInit, gameUpdate, gameDraw)
+
