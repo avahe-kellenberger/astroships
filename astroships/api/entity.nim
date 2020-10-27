@@ -17,9 +17,17 @@ template `or`*(flagsA, flagsB: LayerObjectFlags): bool =
 
 type Entity* = ref object of RootObj
   flags*: LayerObjectFlags
+  x*, y*: float
+  width*, height*: int
 
-proc newEntity*(flags: LayerObjectFlags): Entity =
-  Entity(flags: flags)
+proc newEntity*(flags: LayerObjectFlags, x, y: float = 0f, width, height = 1): Entity =
+  Entity(
+    flags: flags,
+    x: x,
+    y: y,
+    width: width,
+    height: height
+  )
 
 method update*(this: Entity, deltaTime: float) {.base.} = discard
 

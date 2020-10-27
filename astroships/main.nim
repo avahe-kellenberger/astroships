@@ -5,30 +5,20 @@ nico.createWindow("ASTROSHIPS", 128, 128, 4)
 fixedSize(true)
 integerScale(true)
 
-var buttonDown = false
-var frame = 0
-
-## Sprite Aliases
-var sprExplosion = 0;
-var sprShip = 1;
-
-var astroPal = loadPaletteFromGPL("pal/astroships.gpl")
-
-
-var explosion: Explosion
+var
+  buttonDown = false
+  frame = 0
+  astroPal = loadPaletteFromGPL("pal/astroships.gpl")
+  explosion: Explosion
 
 proc gameInit() =
-  # Load sprites
-  loadSpritesheet(sprExplosion, "sprites/explosion.png", 32, 32)
-  loadSpritesheet(sprShip, "sprites/ship.png", 16, 16)
   setPalette(astroPal)
-
-  explosion = newExplosion()
+  explosion = newExplosion(32, 15)
 
 proc gameUpdate(dt: float32) =
   frame += 1
   buttonDown = btn(pcA)
-
+  explosion.rotation += 0.005
   explosion.update(dt)
 
 proc gameDraw() =
@@ -42,5 +32,5 @@ proc gameDraw() =
   if (mousebtnp(0)):
     explosion.resetAnimation()
 
-
 nico.run(gameInit, gameUpdate, gameDraw)
+

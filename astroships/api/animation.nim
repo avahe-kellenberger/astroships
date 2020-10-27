@@ -1,9 +1,9 @@
 type
-  AnimationFrame* = ref object
+  AnimationFrame* = object
     index: int
     hflip, vflip: bool
 
-  Animation* = ref object
+  Animation* = object
     frameDuration: float
     frames: seq[AnimationFrame]
     duration: float
@@ -85,5 +85,4 @@ proc getCurrentFrame*(this: Animation, elapsed: float): AnimationFrame =
     Exception,
     "failed to get AnimationFrame at elapsed time " & $elapsed
   )
-
 
