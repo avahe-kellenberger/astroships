@@ -36,8 +36,8 @@ proc gameUpdate(dt: float32) =
   buttonDown = btn(pcA)
 
   explosion.update(dt)
-  
   control.update(dt)
+
 
 proc gameDraw() =
   cls()
@@ -94,6 +94,19 @@ proc gameDraw() =
   setColor(1)
   print("mouse relY:", 10, 70)
   print($control.mouse.relY, 80, 70)
+
+  ## Accelerating
+  setColor(1)
+  print("Engine:", 10, 80)
+  case control.accelerate:
+  of true:
+    setColor(10)
+    print("true", 80, 80)
+  of false:
+    setColor(2)
+    print("false", 80, 80)
+
+
 
 
 nico.run(gameInit, gameUpdate, gameDraw)
