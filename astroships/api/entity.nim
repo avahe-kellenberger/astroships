@@ -18,15 +18,15 @@ template `or`*(flagsA, flagsB: LayerObjectFlags): bool =
 type Entity* = ref object of RootObj
   flags*: LayerObjectFlags
   x*, y*: float
-  width*, height*: int
+  spriteWidth*, spriteHeight*: int
 
-proc newEntity*(flags: LayerObjectFlags, x, y: float = 0f, width, height = 1): Entity =
+proc newEntity*(flags: LayerObjectFlags, x, y: float = 0f, spriteWidth, spriteHeight = 1): Entity =
   Entity(
     flags: flags,
     x: x,
     y: y,
-    width: width,
-    height: height
+    spriteWidth: spriteWidth,
+    spriteHeight: spriteHeight
   )
 
 method update*(this: Entity, deltaTime: float) {.base.} = discard

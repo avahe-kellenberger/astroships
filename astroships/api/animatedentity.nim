@@ -21,10 +21,18 @@ type AnimatedEntity* = ref object of Entity
   currentAnimationTime: float
   rotation*: float
 
-proc newAnimatedEntity*(spritesheetIndex: int, x, y: float = 0f): AnimatedEntity =
+proc newAnimatedEntity*(
+  spritesheetIndex: int,
+  x, y: float,
+  spriteWidth, spriteHeight: int
+): AnimatedEntity =
   AnimatedEntity(
     flags: loUpdateRender,
-    spritesheetIndex: spritesheetIndex
+    spritesheetIndex: spritesheetIndex,
+    x: x,
+    y: y,
+    spriteWidth: spriteWidth,
+    spriteHeight: spriteHeight
   )
 
 method addAnimation*(this: AnimatedEntity, name: string, animation: Animation) {.base.} =
@@ -43,12 +51,6 @@ method updateCurrentAnimation(this: AnimatedEntity, deltaTime: float) {.base.} =
   this.currentAnimationTime =
     (this.currentAnimationTime + deltaTime) mod this.currentAnimation.duration
 
-method getWidth*(this: AnimatedEntity): int {.base.} =
-  raise newException(Exception, "Function must be implemented")
-
-method getHeight*(this: AnimatedEntity): int {.base.} =
-  raise newException(Exception, "Function must be implemented")
-
 method getCurrentAnimationFrame*(this: AnimatedEntity): AnimationFrame {.base.} =
   ## Gets the current animation frame to render.
   ## By default, it invokes `Animation.getCurrentFrame(this.currentAnimationTime)`
@@ -63,8 +65,8 @@ method renderCurrentAnimation(this: AnimatedEntity) {.base.} =
     spr(frame.index, this.x.int, this.y.int, hflip = frame.hflip, vflip = frame.vflip)
   else:
     let
-      centerX = (this.x + this.width.float * 0.5).int
-      centerY = (this.y + this.height.float * 0.5).int
+      centerX = (this.x + this.spriteWidth.float * 0.5).int
+      centerY = (this.y + this.spriteHeight.float * 0.5).int
     # TODO: There's currently no way to flip AND rotate.
     sprRot(frame.index, centerX, centerY, this.rotation)
 
