@@ -6,22 +6,33 @@ import
 
 import
   entity,
-  animation
+  animation,
+  spritesheetloader
 
 export
   entity,
-  animation
+  animation,
+  spritesheetloader
 
 type AnimatedEntity* = ref object of Entity
   spritesheetIndex*: int
   animations: Table[string, Animation]
   currentAnimation: Animation
   currentAnimationTime: float
+  rotation*: float
 
-proc newAnimatedEntity*(spritesheetIndex: int): AnimatedEntity =
+proc newAnimatedEntity*(
+  spritesheetIndex: int,
+  x, y: float,
+  spriteWidth, spriteHeight: int
+): AnimatedEntity =
   AnimatedEntity(
     flags: loUpdateRender,
-    spritesheetIndex: spritesheetIndex
+    spritesheetIndex: spritesheetIndex,
+    x: x,
+    y: y,
+    spriteWidth: spriteWidth,
+    spriteHeight: spriteHeight
   )
 
 method addAnimation*(this: AnimatedEntity, name: string, animation: Animation) {.base.} =
@@ -40,12 +51,24 @@ method updateCurrentAnimation(this: AnimatedEntity, deltaTime: float) {.base.} =
   this.currentAnimationTime =
     (this.currentAnimationTime + deltaTime) mod this.currentAnimation.duration
 
+method getCurrentAnimationFrame*(this: AnimatedEntity): AnimationFrame {.base.} =
+  ## Gets the current animation frame to render.
+  ## By default, it invokes `Animation.getCurrentFrame(this.currentAnimationTime)`
+  return this.currentAnimation.getCurrentFrame(this.currentAnimationTime)
+
 method renderCurrentAnimation(this: AnimatedEntity) {.base.} =
   ## Renders the current animation frame.
   ## This is automatically invoked by render()
   setSpritesheet(this.spritesheetIndex)
-  let frame = this.currentAnimation.getCurrentFrame(this.currentAnimationTime)
-  spr(frame.index, 0, 0, hflip = frame.hflip, vflip = frame.vflip)
+  let frame = this.getCurrentAnimationFrame()
+  if this.rotation == 0.0:
+    spr(frame.index, this.x.int, this.y.int, hflip = frame.hflip, vflip = frame.vflip)
+  else:
+    let
+      centerX = (this.x + this.spriteWidth.float * 0.5).int
+      centerY = (this.y + this.spriteHeight.float * 0.5).int
+    # TODO: There's currently no way to flip AND rotate.
+    sprRot(frame.index, centerX, centerY, this.rotation)
 
 method update*(this: AnimatedEntity, deltaTime: float) =
   this.updateCurrentAnimation(deltaTime)
