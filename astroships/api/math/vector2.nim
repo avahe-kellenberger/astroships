@@ -2,13 +2,11 @@ import
   math,
   random
 
-randomize()
-
 type
-  Vector2* = object
+  Vector2* = ref object
     x*, y*: float
 
-proc newVector2*(x, y: float): Vector2 =
+proc newVector2*(x, y: float = 0.0): Vector2 =
   Vector2(x: x, y: y)
 
 template `$`*(this: Vector2): string =
@@ -19,7 +17,7 @@ template `$`*(this: Vector2): string =
 func `+`*(this, v: Vector2): Vector2 =
   newVector2(this.x + v.x, this.y + v.y)
 
-func `+`*(this: Vector2, x, y: float): Vector2 =
+func add*(this: Vector2, x, y: float): Vector2 =
   newVector2(this.x + x, this.y + y)
 
 # Subtract
@@ -27,7 +25,7 @@ func `+`*(this: Vector2, x, y: float): Vector2 =
 func `-`*(this, v: Vector2): Vector2 =
   newVector2(this.x - v.x, this.y - v.y)
 
-func `-`*(this: Vector2, x, y: float): Vector2 =
+func subtract*(this: Vector2, x, y: float): Vector2 =
   newVector2(this.x - x, this.y - y)
 
 # Multiply
@@ -35,22 +33,22 @@ func `-`*(this: Vector2, x, y: float): Vector2 =
 func `*`*(this, v: Vector2): Vector2 =
   newVector2(this.x * v.x, this.y * v.y)
 
-func `*`*(this: Vector2, x, y: float): Vector2 =
-  newVector2(this.x * x, this.y * y)
-
 func `*`*(this: Vector2, scalar: float): Vector2 =
   newVector2(this.x * scalar, this.y * scalar)
+
+func multiply*(this: Vector2, x, y: float): Vector2 =
+  newVector2(this.x * x, this.y * y)
 
 # Divide
 
 func `/`*(this, v: Vector2): Vector2 =
   newVector2(this.x / v.x, this.y / v.y)
 
-func `/`*(this: Vector2, x, y: float): Vector2 =
-  newVector2(this.x / x, this.y / y)
-
 func `/`*(this: Vector2, scalar: float): Vector2 =
   newVector2(this.x / scalar, this.y / scalar)
+
+func divide*(this: Vector2, x, y: float): Vector2 =
+  newVector2(this.x / x, this.y / y)
 
 func `==`*(this, v: Vector2): bool =
   this.x == v.x and this.y == v.y
@@ -161,4 +159,3 @@ func perpendicular*(this: Vector2): Vector2 =
 
 proc random*(this: Vector2): float =
   rand(this.y - this.x) + this.x
-

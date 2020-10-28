@@ -14,10 +14,11 @@ proc newGameObject*(
   x, y: float,
   spriteWidth, spriteHeight: int
 ): GameObject =
-  GameObject(
+  result = GameObject(
     flags: loPhysics,
     spritesheetIndex: spritesheetIndex,
     x: x,
     y: y
   )
+  result.velocity = Vector2()
 

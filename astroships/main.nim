@@ -1,4 +1,9 @@
+import random
 import nico, objects/explosion as exp
+
+# Random is used in different modules,
+# and needs to be initialized globally.
+randomize()
 
 nico.init("nico", "ASTROSHIPS")
 nico.createWindow("ASTROSHIPS", 1920 div 2, 1080 div 2, 4)
