@@ -9,6 +9,9 @@ type
 proc newVector2*(x, y: float = 0.0): Vector2 =
   Vector2(x: x, y: y)
 
+proc newVector2*(x, y: int = 0): Vector2 =
+  Vector2(x: x.float, y: y.float)
+
 template `$`*(this: Vector2): string =
   "(x: " & $this.x & ", y: " & $this.y & ")"
 
