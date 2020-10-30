@@ -1,5 +1,5 @@
 import unittest
-import ../../astroships
+import ../../astroships/api
 
 suite "scene":
 

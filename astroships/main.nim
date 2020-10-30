@@ -1,5 +1,10 @@
+import nico
+
 import random
-import nico, objects/explosion as exp
+
+import 
+  api,
+  objects/explosion as exp
 
 # Random is used in different modules,
 # and needs to be initialized globally.
@@ -13,10 +18,17 @@ integerScale(true)
 var
   astroPal = loadPaletteFromGPL("pal/astroships.gpl")
   explosion: Explosion
+  polyTest: Polygon
 
 proc gameInit() =
   setPalette(astroPal)
   explosion = newExplosion(32, 15)
+  polyTest = newPolygon([
+    newVector2(50, 50),
+    newVector2(100, 50),
+    newVector2(100, 100),
+    newVector2(50, 100)
+  ])
 
 proc gameUpdate(dt: float32) =
   explosion.rotation += 0.005
@@ -32,6 +44,7 @@ proc gameDraw() =
     explosion.resetAnimation()
 
   explosion.render()
+  polyTest.render()
 
 nico.run(gameInit, gameUpdate, gameDraw)
 

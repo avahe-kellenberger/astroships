@@ -1,7 +1,7 @@
 import sequtils
-import ../api/animatedentity
+import ../api/gameobject
 
-export animatedentity
+export gameobject
 
 const
   spritesheet = "explosion.png"
@@ -19,7 +19,7 @@ type
     # All animation names are derived from the enum.
     Explode
 
-  Explosion* = ref object of AnimatedEntity
+  Explosion* = ref object of GameObject
 
 # Implicitly convert enum names to a string.
 converter animToString*(animation: ExplosionAnim): string = $animation

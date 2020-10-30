@@ -1,4 +1,7 @@
+import nico
+
 import
+  options,
   math,
   random,
   algorithm,
@@ -16,6 +19,7 @@ type Polygon* = ref object
   vertices: seq[Vector2]
   bounds: Rectangle
   center: Vector2
+  clockwise: Option[bool]
 
 proc newPolygon*(vertices: openArray[Vector2]): Polygon =
   if vertices.len < 3:
@@ -248,4 +252,31 @@ proc createRandomConvex*(vertexCount: int, width, height: float): Polygon =
       points[i] = points[i].subtract(minPolyX, minPolyY)
 
   return newPolygon(points)
+
+proc isClockwise*(this: Polygon): bool =
+  ## Determines whether the polygon's vertices wind in the clockwise direction.
+  ##
+  ## How to determine if a list of polygon points are in clockwise-order:
+  ## http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order 
+  ##
+  ## Complexity: O(n), where 'n' is the number of vertices in the polygon.
+  ## @returns {boolean} true if the polygon vertices wind the clockwise direction,
+  ## or false if they wind in the counter-clockwise direction.
+  if this.clockwise.isNone:
+    var 
+      sum = 0f
+      lastV = this[this.len - 1]
+      currV: Vector2
+    for i in 0..this.len:
+      currV = this[i]
+      sum += (currV.x - lastV.x) * (currV.y + lastV.y)
+      lastV = currV
+    this.clockwise = (sum < 0.0).option
+  return this.clockwise.get
+
+proc render*(this: Polygon, color: int = 1) =
+  setColor(color)
+  for i, v in this:
+    let nextVert = this[(i + 1) mod this.len]
+    line(v.x, v.y, nextVert.x, nextVert.y)
 

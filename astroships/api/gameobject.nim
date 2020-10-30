@@ -1,12 +1,13 @@
 import
   animatedentity,
-  math/[vector2, polygon]
+  math/[vector2, polygon],
+  math/collision/collisionhull
 
 export
   animatedentity
 
 type GameObject* = ref object of AnimatedEntity
-  collisionHull*: Polygon
+  collisionHull*: CollisionHull
   velocity*: Vector2
 
 proc newGameObject*(

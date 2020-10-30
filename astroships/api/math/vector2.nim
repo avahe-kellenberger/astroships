@@ -154,7 +154,7 @@ func rotateAround*(this: Vector2, theta: float, anchorPoint: Vector2): Vector2 =
 func perpendicular*(this: Vector2): Vector2 =
   ## Gets a perpendicular vector to this vector.
   ## This perpendicular vector faces to the right of this vector.
-  ## @return {Vector2D}
+  ## @return {Vector2}
   return newVector2(-this.y, this.x)
 
 proc random*(this: Vector2): float =
