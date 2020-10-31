@@ -7,7 +7,7 @@ export layer, entity
 
 type Scene* = ref object of RootObj
   layers: seq[Layer]
-  isLayerOrderValid: bool
+  isLayerOrderValid*: bool
 
 proc newScene*: Scene = 
   Scene(isLayerOrderValid: true)
