@@ -2,36 +2,43 @@ import nico
 import ../entity
 
 type TextAlign* = enum
-    alnLeft
-    alnCenter
-    alnRight
+  taLeft
+  taCenter
+  taRight
 
 type TextEntity* = ref object of Entity
-    text*: string
-    align*: TextAlign
-    scale*: int
-    color*: int
+  text*: string
+  textWidth: int
+  align*: TextAlign
+  scale*: int
+  color*: int
 
-proc newTextEntity*(text: string, x, y: float = 0f, align: TextAlign, scale, color: int = 1): TextEntity =
+proc newTextEntity*(
+  text: string,
+  x, y: float,
+  align: TextAlign = taLeft,
+  scale, color: int = 1
+): TextEntity =
   result = TextEntity(
     flags: loRender,
     x: x,
-    y: y
+    y: y,
+    text: text,
+    align: align,
+    scale: scale,
+    color: color,
+    textWidth: textWidth(text)
   )
-  result.text = text
-  result.align = align
-  result.scale = scale
-  result.color = color
+
+template getTextWidth*(this: TextEntity): int = this.textWidth
 
 method render*(this: TextEntity) =
-    setColor(this.color)
-    case this.align:
-    of alnLeft:
-        print(this.text, this.x, this.y, this.scale)
-    of alnCenter:
-        printc(this.text, this.x, this.y, this.scale)
-    of alnRight:
-        printr(this.text, this.x, this.y, this.scale)
+  setColor(this.color)
+  case this.align:
+  of taLeft:
+    print(this.text, this.x, this.y, this.scale)
+  of taCenter:
+    printc(this.text, this.x, this.y, this.scale)
+  of taRight:
+    printr(this.text, this.x, this.y, this.scale)
 
-proc getTextWidth*(text: string, scale: Pint): Pint =
-    result = textWidth(text, scale)

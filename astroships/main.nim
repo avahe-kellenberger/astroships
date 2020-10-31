@@ -1,7 +1,9 @@
-import random
 import nico
-import api/scene, api/layer
-import scenes/titlescene/titlescene
+import random
+import 
+  windowprops,
+  api/[scene, layer],
+  scenes/titlescene/titlescene
 
 # Random is used in different modules,
 # and needs to be initialized globally.
@@ -9,7 +11,7 @@ randomize()
 
 # Nico Config
 nico.init("nico", "ASTROSHIPS")
-nico.createWindow("ASTROSHIPS", 1920 div 2, 1080 div 2, 4)
+nico.createWindow("ASTROSHIPS", WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_SCALE)
 fixedSize(true)
 integerScale(true)
 

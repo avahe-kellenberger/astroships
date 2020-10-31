@@ -1,0 +1,4 @@
+const
+  WINDOW_WIDTH* = 1920 div 2
+  WINDOW_HEIGHT* = 1080 div 2
+  WINDOW_SCALE* = 4
