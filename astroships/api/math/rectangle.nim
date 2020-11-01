@@ -1,6 +1,6 @@
 type 
   Rectangle* = ref object
-    x, y, width, height: float
+    x*, y*, width*, height*: float
 
 proc newRectangle*(x, y, width, height: float): Rectangle =
   Rectangle(
@@ -9,4 +9,11 @@ proc newRectangle*(x, y, width, height: float): Rectangle =
     width: width,
     height: height
   )
+
+proc containsPoint*(x, y, width, height, pointX, pointY: float): bool =
+  return
+    pointX >= x and
+    pointX < x + width and
+    pointY >= y and
+    pointY < y + height
 
