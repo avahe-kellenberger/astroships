@@ -6,6 +6,8 @@ type
   Vector2* = ref object
     x*, y*: float
 
+let VectorZero* = Vector2(x: 0f, y: 0f)
+
 proc newVector2*(x, y: float = 0.0): Vector2 =
   Vector2(x: x, y: y)
 
@@ -54,7 +56,9 @@ func divide*(this: Vector2, x, y: float): Vector2 =
   newVector2(this.x / x, this.y / y)
 
 func `==`*(this, v: Vector2): bool =
-  this.x == v.x and this.y == v.y
+  if this.isNil or v.isNil:
+    return this.isNil and v.isNil
+  return this.x == v.x and this.y == v.y
 
 func getMagnitudeSquared*(this: Vector2): float =
   return

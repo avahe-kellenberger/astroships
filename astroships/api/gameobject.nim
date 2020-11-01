@@ -18,8 +18,7 @@ proc newGameObject*(
   result = GameObject(
     flags: loPhysics,
     spritesheetIndex: spritesheetIndex,
-    x: x,
-    y: y
+    center: newVector2(x, y)
   )
   result.velocity = Vector2()
 

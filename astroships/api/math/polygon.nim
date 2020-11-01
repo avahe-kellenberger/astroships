@@ -38,11 +38,31 @@ iterator pairs*(this: Polygon): (int, Vector2) =
   for i, v in this.vertices:
     yield (i, v)
 
+func project*(this: Polygon, location, axis: Vector2): Vector2 =
+  let startLoc = this[0] + location
+  var 
+    dotProduct = axis.dotProduct(startLoc)
+    min = dotProduct
+    max = dotProduct
+  for i in 0..<this.len:
+    let currLoc = this[i] + location
+    dotProduct = axis.dotProduct(currLoc)
+    if dotProduct < min:
+      min = dotProduct
+    if dotProduct > max:
+      max = dotProduct
+  return newVector2(min, max)
+
 func getLinePixels*(v1, v2: Vector2, outPixels: var seq[Vector2]) =
   ## Generates an array of points which lie on the parameterized line.
-  ## @param {Vector2} v1 The starting point on the line.
-  ## @param {Vector2} v2 The end point of the line.
-  ## @param {Vector2[]} outPixels The array of pixels to add the pixel locations to.
+  ## @param v1:
+  ##   The starting point on the line.
+  ##
+  ## @param v2:
+  ##   The end point of the line.
+  ##
+  ## @param outPixels:
+  ##   The array of pixels to add the pixel locations to.
   let 
     edgeX = v2.x - v1.x
     edgeY = v2.y - v1.y
@@ -81,7 +101,6 @@ func getLinePixels*(v1, v2: Vector2, outPixels: var seq[Vector2]) =
 
 func generatePerimeterPixels*(this: Polygon): seq[Vector2] =
   ## Generates an array of points which lie on the Polygon's perimeter.
-  ## @returns {seq[Vector2]}
   var lastVertex = this.vertices[this.vertices.high]
   for i, vertex in this:
     getLinePixels(lastVertex, vertex, result)
@@ -162,16 +181,20 @@ proc createRandomConvex*(vertexCount: int, width, height: float): Polygon =
   ##
   ## http://cglab.ca/~sander/misc/ConvexGeneration/convex.html
   ##
-  ## @param vertexCount The number of vertices the polygon should have.
-  ## @param width The width of the polygon to generate.
-  ## @param height The height of the polygon to generate.
-  ## @return {Polygon}
+  ## @param vertexCount:
+  ##   The number of vertices the polygon should have.
+  ##
+  ## @param width:
+  ##   The width of the polygon to generate.
+  ##
+  ## @param height: 
+  ##   The height of the polygon to generate.
   var
     xCoords: seq[float]
     yCoords: seq[float]
 
   # Generate lists of sorted random X and Y coordinates.
-  for i in 0..vertexCount:
+  for i in 0..<vertexCount:
     xCoords.add rand(1.0)
     yCoords.add rand(1.0)
 
@@ -188,7 +211,7 @@ proc createRandomConvex*(vertexCount: int, width, height: float): Polygon =
       xRatio = width / maxX
       yRatio = height / maxY
 
-    for i in 0..vertexCount:
+    for i in 0..<vertexCount:
       xCoords[i] = (xCoords[i] - minX) * xRatio
       yCoords[i] = (yCoords[i] - minY) * yRatio
 
@@ -228,7 +251,7 @@ proc createRandomConvex*(vertexCount: int, width, height: float): Polygon =
 
   # Combine the paired up components into vectors.
   var vectors: seq[Vector2]
-  for i in 0..vertexCount:
+  for i in 0..<vertexCount:
     vectors.add(newVector2(xComponents[i], yComponents[i]))
 
   # Sort the vectors by angle.
@@ -239,7 +262,7 @@ proc createRandomConvex*(vertexCount: int, width, height: float): Polygon =
     x, y, minPolyX, minPolyY: float
     points: seq[Vector2]
 
-  for i in 0..vertexCount:
+  for i in 0..<vertexCount:
     points.add(newVector2(x, y))
     x += vectors[i].x
     y += vectors[i].y
@@ -248,7 +271,7 @@ proc createRandomConvex*(vertexCount: int, width, height: float): Polygon =
 
   # Move the polygon to the origin.
   if minPolyX != 0 or minPolyY != 0:
-    for i in 0..vertexCount:
+    for i in 0..<vertexCount:
       points[i] = points[i].subtract(minPolyX, minPolyY)
 
   return newPolygon(points)
@@ -267,16 +290,20 @@ proc isClockwise*(this: Polygon): bool =
       sum = 0f
       lastV = this[this.len - 1]
       currV: Vector2
-    for i in 0..this.len:
+    for i in 0..<this.len:
       currV = this[i]
       sum += (currV.x - lastV.x) * (currV.y + lastV.y)
       lastV = currV
     this.clockwise = (sum < 0.0).option
   return this.clockwise.get
 
-proc render*(this: Polygon, color: int = 1) =
-  setColor(color)
+proc render*(this: Polygon, offset: Vector2 = VectorZero) =
   for i, v in this:
     let nextVert = this[(i + 1) mod this.len]
-    line(v.x, v.y, nextVert.x, nextVert.y)
+    line(
+      offset.x + v.x,
+      offset.y + v.y,
+      offset.x + nextVert.x,
+      offset.y + nextVert.y
+    )
 

@@ -31,8 +31,7 @@ proc newExplosion*(x, y: int): Explosion =
   result =
     Explosion(
       spritesheetIndex: spritesheetIndex,
-      x: x.float,
-      y: y.float,
+      center: newVector2(x, y),
       spriteWidth: spriteWidth,
       spriteHeight: spriteHeight
     )

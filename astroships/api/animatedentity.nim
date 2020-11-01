@@ -29,8 +29,7 @@ proc newAnimatedEntity*(
   AnimatedEntity(
     flags: loUpdateRender,
     spritesheetIndex: spritesheetIndex,
-    x: x,
-    y: y,
+    center: newVector2(x, y),
     spriteWidth: spriteWidth,
     spriteHeight: spriteHeight
   )

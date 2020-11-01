@@ -1,3 +1,7 @@
+import math/vector2
+
+export vector2
+
 ## Flags indicating how the object should be treated by a layer.
 type LayerObjectFlags* = enum
   ## Only update
@@ -17,17 +21,19 @@ template `or`*(flagsA, flagsB: LayerObjectFlags): bool =
 
 type Entity* = ref object of RootObj
   flags*: LayerObjectFlags
-  x*, y*: float
+  center*: Vector2
   spriteWidth*, spriteHeight*: int
 
 proc newEntity*(flags: LayerObjectFlags, x, y: float = 0f, spriteWidth, spriteHeight = 1): Entity =
   Entity(
     flags: flags,
-    x: x,
-    y: y,
+    center: newVector2(x, y),
     spriteWidth: spriteWidth,
     spriteHeight: spriteHeight
   )
+
+template x*(this: Entity): float = this.center.x
+template y*(this: Entity): float = this.center.y
 
 method update*(this: Entity, deltaTime: float) {.base.} = discard
 
