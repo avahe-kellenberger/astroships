@@ -2,7 +2,7 @@ import nico
 import random
 import 
   windowprops,
-  api/[scene, layer],
+  api/[scene, layer, printfix],
   scenes/titlescene/titlescene
 
 # Random is used in different modules,
@@ -15,7 +15,7 @@ nico.createWindow("ASTROSHIPS", WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_SCALE, WINDO
 fixedSize(true)
 integerScale(true)
 
-loadFont(2, "test2.png")
+loadFont(2, "fontfix.png")
 
 ## Load Palette
 var astroPal = loadPaletteFromGPL("pal/astroships.gpl")
@@ -40,8 +40,10 @@ proc gameUpdate(dt: float32) =
 # Draw Game
 proc gameDraw() =
   cls()
-  setColor(3)
+  setColor(8)
   rectFill(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+
+  setColor(1)
   currentScene.render()
 
 # Run Game

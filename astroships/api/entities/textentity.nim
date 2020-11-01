@@ -19,6 +19,7 @@ type TextEntity* = ref object of Entity
   containsMouse*: bool
   mouseEnterListeners: seq[proc: void]
   mouseLeaveListeners: seq[proc: void]
+  mouseClickListeners: seq[proc: void]
 
 proc newTextEntity*(
   text: string,
@@ -78,6 +79,8 @@ proc addMouseLeaveListener*(this: TextEntity, listener: proc()) =
   this.mouseLeaveListeners.add(listener)
 proc addMouseEnterListener*(this: TextEntity, listener: proc()) =
   this.mouseEnterListeners.add(listener)
+proc addMouseClickListener*(this: TextEntity, listener: proc()) =
+  this.mouseClickListeners.add(listener)
 
 proc onMouseLeave*(this: TextEntity) =
   for listener in this.mouseLeaveListeners:
@@ -87,9 +90,15 @@ proc onMouseEnter*(this: TextEntity) =
   for listener in this.mouseEnterListeners:
     listener()
 
+proc onMouseClick*(this: TextEntity) =
+  for listener in this.mouseClickListeners:
+    listener()
+
 method update*(this: TextEntity, deltaTime: float) =
   let mouseCoord = mouse()
   let doesContainMouse = this.containsPoint(mouseCoord[0].float, mouseCoord[1].float)
+  if doesContainMouse and mousebtnpr(0):
+    this.onMouseClick()
   if this.containsMouse != doesContainMouse:
     this.containsMouse = doesContainMouse
     if this.containsMouse:
