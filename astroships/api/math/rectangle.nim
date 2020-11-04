@@ -1,6 +1,6 @@
 import vector2
 
-type 
+type
   Rectangle* = ref RectangleObj
   RectangleObj* = object
     x, y, width, height: float
@@ -31,4 +31,12 @@ template height*(this: Rectangle): float = this.height
 template topLeft*(this: Rectangle): Vector2 = this.topLeft
 template center*(this: Rectangle): Vector2 = this.center
 template bottomRight*(this: Rectangle): Vector2 = this.bottomRight
+
+proc getScaledInstance*(this: Rectangle, scalar: float): Rectangle =
+  newRectangle(
+    this.x * scalar,
+    this.y * scalar,
+    this.width * scalar,
+    this.height * scalar
+  )
 

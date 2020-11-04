@@ -1,17 +1,18 @@
 import
   animatedentity,
-  math/[vector2, polygon],
+  math/[vector2, polygon, rectangle],
   math/collision/collisionhull
 
 export
-  animatedentity
+  animatedentity,
+  Rectangle
 
 type GameObject* = ref object of AnimatedEntity
   collisionHull*: CollisionHull
   velocity*: Vector2
 
 proc newGameObject*(
-  spritesheetIndex: int, 
+  spritesheetIndex: int,
   x, y: float,
   spriteWidth, spriteHeight: int
 ): GameObject =
@@ -21,4 +22,6 @@ proc newGameObject*(
     center: newVector2(x, y)
   )
   result.velocity = Vector2()
+
+template getBounds*(this: GameObject): Rectangle = this.collisionHull.getBounds()
 

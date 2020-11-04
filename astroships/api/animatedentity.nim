@@ -16,6 +16,8 @@ export
 
 type AnimatedEntity* = ref object of Entity
   spritesheetIndex*: int
+  spriteWidth*: int
+  spriteHeight*: int
   animations: Table[string, Animation]
   currentAnimation: Animation
   currentAnimationTime: float
@@ -24,7 +26,7 @@ type AnimatedEntity* = ref object of Entity
 proc newAnimatedEntity*(
   spritesheetIndex: int,
   x, y: float,
-  spriteWidth, spriteHeight: int
+  spriteWidth, spriteHeight: int = 1
 ): AnimatedEntity =
   AnimatedEntity(
     flags: loUpdateRender,

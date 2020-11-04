@@ -12,6 +12,7 @@ type
     chkPolygon
 
   CollisionHull* = ref object
+    bounds: Rectangle
     case kind: CollisionHullKind
     of chkCirle:
       circle: Circle
@@ -24,19 +25,23 @@ proc newPolygonCollisionHull*(polygon: Polygon): CollisionHull =
 proc newCircleCollisionHull*(circle: Circle): CollisionHull =
   CollisionHull(kind: chkCirle, circle: circle)
 
-proc width*(this: CollisionHull): float =
-  case this.kind:
-  of chkCirle:
-    return this.circle.getRadius() * 2
-  of chkPolygon:
-    return this.polygon.getBounds().width
+proc getBounds*(this: CollisionHull): Rectangle =
+  if this.bounds == nil:
+    case this.kind:
+    of chkCirle:
+      this.bounds = newRectangle(
+        this.circle.getCenter().x - this.circle.getRadius(),
+        this.circle.getCenter().y - this.circle.getRadius(),
+        this.circle.getRadius() * 2,
+        this.circle.getRadius() * 2
+      )
+    of chkPolygon:
+      this.bounds = this.polygon.getBounds()
 
-proc height*(this: CollisionHull): float =
-  case this.kind:
-  of chkCirle:
-    return this.circle.getRadius() * 2
-  of chkPolygon:
-    return this.polygon.getBounds().height
+  return this.bounds
+
+proc width*(this: CollisionHull): float = this.getBounds().width
+proc height*(this: CollisionHull): float = this.getBounds().height
 
 func getCircleToCircleProjectionAxes(circleA, circleB: Circle, aToB: Vector2): seq[Vector2] =
   result.add(
