@@ -1,3 +1,4 @@
+import hashes
 import math/vector2
 
 export vector2
@@ -22,18 +23,17 @@ template `or`*(flagsA, flagsB: LayerObjectFlags): bool =
 type Entity* = ref object of RootObj
   flags*: LayerObjectFlags
   center*: Vector2
-  spriteWidth*, spriteHeight*: int
 
-proc newEntity*(flags: LayerObjectFlags, x, y: float = 0f, spriteWidth, spriteHeight = 1): Entity =
+proc newEntity*(flags: LayerObjectFlags, x, y: float = 0f): Entity =
   Entity(
     flags: flags,
-    center: newVector2(x, y),
-    spriteWidth: spriteWidth,
-    spriteHeight: spriteHeight
+    center: newVector2(x, y)
   )
 
 template x*(this: Entity): float = this.center.x
 template y*(this: Entity): float = this.center.y
+
+method hash*(this: Entity): Hash {.base.} = hash(this[].unsafeAddr)
 
 method update*(this: Entity, deltaTime: float) {.base.} = discard
 

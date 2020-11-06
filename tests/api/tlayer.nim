@@ -1,7 +1,7 @@
 import unittest
 import ../../astroships/api
 
-var 
+var
   updateCallCount = 0
   renderCallCount = 0
 
@@ -39,7 +39,7 @@ suite "layer":
 
     layer.update(0.1)
     layer.render()
-    
+
     check updateCallCount == 4
     check renderCallCount == 5
 

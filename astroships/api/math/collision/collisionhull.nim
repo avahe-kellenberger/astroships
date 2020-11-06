@@ -1,17 +1,18 @@
 import
   math
 
-import 
+import
   ../vector2,
   ../circle,
   ../polygon
 
-type 
+type
   CollisionHullKind* = enum
     chkCirle
     chkPolygon
 
   CollisionHull* = ref object
+    bounds: Rectangle
     case kind: CollisionHullKind
     of chkCirle:
       circle: Circle
@@ -24,23 +25,27 @@ proc newPolygonCollisionHull*(polygon: Polygon): CollisionHull =
 proc newCircleCollisionHull*(circle: Circle): CollisionHull =
   CollisionHull(kind: chkCirle, circle: circle)
 
-proc width*(this: CollisionHull): float =
-  case this.kind:
-  of chkCirle:
-    return this.circle.getRadius() * 2
-  of chkPolygon:
-    return this.polygon.getBounds().width
+proc getBounds*(this: CollisionHull): Rectangle =
+  if this.bounds == nil:
+    case this.kind:
+    of chkCirle:
+      this.bounds = newRectangle(
+        this.circle.center.x - this.circle.radius,
+        this.circle.center.y - this.circle.radius,
+        this.circle.radius * 2,
+        this.circle.radius * 2
+      )
+    of chkPolygon:
+      this.bounds = this.polygon.getBounds()
 
-proc height*(this: CollisionHull): float =
-  case this.kind:
-  of chkCirle:
-    return this.circle.getRadius() * 2
-  of chkPolygon:
-    return this.polygon.getBounds().height
+  return this.bounds
+
+proc width*(this: CollisionHull): float = this.getBounds().width
+proc height*(this: CollisionHull): float = this.getBounds().height
 
 func getCircleToCircleProjectionAxes(circleA, circleB: Circle, aToB: Vector2): seq[Vector2] =
   result.add(
-    (circleB.getCenter() - circleA.getCenter() + aToB)
+    (circleB.center - circleA.center + aToB)
     .normalize()
   )
 
@@ -69,11 +74,10 @@ func getCircleToPolygonProjectionAxes(
   poly: Polygon,
   circleToPoly: Vector2
 ): seq[Vector2] =
-  let circleCenter = circle.getCenter()
   for i in 0..poly.len:
-      result.add(
-        normalize((poly[i] - circleCenter) - circleToPoly)
-      )
+    result.add(
+      normalize((poly[i] - circle.center) - circleToPoly)
+    )
 
 func getProjectionAxes*(
   this: CollisionHull,
@@ -124,7 +128,7 @@ func getFarthest*(this: CollisionHull, direction: Vector2): seq[Vector2] =
   ## Gets the farthest point(s) of the CollisionHull in the direction of the vector.
   case this.kind:
   of chkCirle:
-    return @[this.circle.getCenter() + direction.normalize(this.circle.getRadius())];
+    return @[this.circle.center + direction.normalize(this.circle.radius)];
   of chkPolygon:
     return this.polygon.polygonGetFarthest(direction)
 

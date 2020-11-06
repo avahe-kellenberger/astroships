@@ -7,8 +7,11 @@ import api/
     animation,
     math/vector2,
     math/polygon,
+    math/rectangle,
+    math/circle,
     math/collision/collisionhull,
-    math/collision/sat
+    math/collision/sat,
+    math/collision/spatialgrid
   ]
 
 export
@@ -19,6 +22,9 @@ export
   animation,
   vector2,
   polygon,
+  rectangle,
+  circle,
   collisionhull,
-  sat
+  sat,
+  spatialgrid
 
