@@ -67,11 +67,6 @@ proc add*(this: SpatialGrid, obj: GameObject) =
   let objBounds = this.scaleToGrid(obj.getBounds())
   for cell in this.cellInBounds(objBounds):
     let keyID = getKeyID(cell.x, cell.y)
-
-    if this.cells.hasKey(keyID) and obj in this.cells[keyID].objects:
-      # Object is already in this cell.
-      continue
-
     var cell = this.cells.getOrDefault(keyID, newSpatialCell(keyID))
     cell.add(obj)
     this.cells[keyID] = cell

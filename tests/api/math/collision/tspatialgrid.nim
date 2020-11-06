@@ -1,5 +1,5 @@
 import unittest, sequtils
-import ../../../astroships/api
+import ../../../../astroships/api
 
 const cellSize = 20
 
