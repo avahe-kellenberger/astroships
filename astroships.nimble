@@ -1,3 +1,4 @@
+import os, strutils
 # Package
 
 version = "0.0.0"
@@ -34,5 +35,12 @@ task deps, "Downloads dependencies":
  exec "unzip SDL2_x64.zip"
 
 task test, "run tests":
-  exec "for i in tests/**/*.nim; do nim c -r --multimethods:on \"$i\"; done"
+  proc testEachNimFileRecursive(dir, cmd: string) =
+    for kind, path in walkDir(dir):
+      if kind == pcDir:
+        testEachNimFileRecursive(path, cmd)
+      elif kind == pcFile and path.endsWith(".nim"):
+        exec cmd & " " & path
+
+  testEachNimFileRecursive("./tests/", "nim c -r --multimethods:on")
 

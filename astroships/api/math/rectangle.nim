@@ -40,3 +40,7 @@ proc getScaledInstance*(this: Rectangle, scalar: float): Rectangle =
     this.height * scalar
   )
 
+template `$`*(this: Rectangle): string =
+  "x: " & $this.x & ", y: " & $this.y &
+  ", width: " & $this.width & ", height: " & $this.height
+

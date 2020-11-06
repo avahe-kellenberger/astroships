@@ -23,5 +23,9 @@ proc newGameObject*(
   )
   result.velocity = Vector2()
 
-template getBounds*(this: GameObject): Rectangle = this.collisionHull.getBounds()
+template getBounds*(this: GameObject): Rectangle =
+  if this.collisionHull != nil:
+    this.collisionHull.getBounds()
+  else:
+    nil
 

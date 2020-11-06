@@ -33,7 +33,7 @@ proc newEntity*(flags: LayerObjectFlags, x, y: float = 0f): Entity =
 template x*(this: Entity): float = this.center.x
 template y*(this: Entity): float = this.center.y
 
-method hash*(this: Entity): Hash {.base.} = hash(this.unsafeAddr)
+method hash*(this: Entity): Hash {.base.} = hash(this[].unsafeAddr)
 
 method update*(this: Entity, deltaTime: float) {.base.} = discard
 
