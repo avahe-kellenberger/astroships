@@ -13,7 +13,7 @@ requires "nico >= 0.3.2"
 srcDir = "src"
 
 task runr, "Runs astroships for current platform":
- exec "nim c -r --multimethods:on -d:release -o:astroships astroships/main.nim"
+ exec "nim c -r --multimethods:on -d:release -d:opengl -o:astroships astroships/main.nim"
 
 task rund, "Runs debug astroships for current platform":
  exec "nim c -r --multimethods:on -d:debug -o:astroships astroships/main.nim"
