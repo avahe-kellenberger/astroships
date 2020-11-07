@@ -1,7 +1,7 @@
 import sequtils
-import ../api/gameobject
+import ../api/animatedentity
 
-export gameobject
+export animatedentity
 
 const
   spritesheet = "explosion.png"
@@ -15,11 +15,11 @@ var spritesheetIndex = -1
 let explodeAnimation: Animation = newAnimation(0.05, toSeq(0..11))
 
 type
-  ExplosionAnim* {.pure.} = enum 
+  ExplosionAnim* {.pure.} = enum
     # All animation names are derived from the enum.
     Explode
 
-  Explosion* = ref object of GameObject
+  Explosion* = ref object of AnimatedEntity
 
 # Implicitly convert enum names to a string.
 converter animToString*(animation: ExplosionAnim): string = $animation
@@ -31,10 +31,11 @@ proc newExplosion*(x, y: int): Explosion =
   result =
     Explosion(
       spritesheetIndex: spritesheetIndex,
-      center: newVector2(x, y),
+      center: initVector2(x, y),
       spriteWidth: spriteWidth,
       spriteHeight: spriteHeight
     )
+  result.flags = loPhysics
 
   # Add any animations we need.
   result.addAnimation(Explode, explodeAnimation)

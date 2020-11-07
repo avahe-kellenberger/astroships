@@ -25,7 +25,7 @@ proc newPerlinGrid*(width, height: int): PerlinGrid =
     for y in 0..result.height:
       ## These vectors are used for random directional purposes only.
       result.gradientVectors[x][y] = 
-        newVector2(
+        initVector2(
           rand(-1..1),
           rand(-1..1)
         ).normalize()
@@ -55,7 +55,7 @@ func getGridGradientDot*(this: PerlinGrid, nodeX, nodeY, x, y: float): float =
   ## @param {float} x The random x coordinate on the grid.
   ## @param {float} y The random y coordinate on the grid.
   ## @return {float}
-  let v = newVector2(x - nodeX, y - nodeY)
+  let v = initVector2(x - nodeX, y - nodeY)
   return (this.getGradientVector(nodeX.int, nodeY.int).dotProduct(v) + 1) / 2
 
 func getNoise*(this: PerlinGrid, x, y: float): float =

@@ -24,10 +24,10 @@ proc gameInit() =
   setPalette(astroPal)
   explosion = newExplosion(32, 15)
   polyTest = newPolygon([
-    newVector2(50, 50),
-    newVector2(100, 50),
-    newVector2(100, 100),
-    newVector2(50, 100)
+    initVector2(50, 50),
+    initVector2(100, 50),
+    initVector2(100, 100),
+    initVector2(50, 100)
   ])
 
 proc gameUpdate(dt: float32) =

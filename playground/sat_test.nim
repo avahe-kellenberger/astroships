@@ -26,7 +26,7 @@ var
 proc newPolyObject(x, y: float, poly: Polygon): PolyObject =
   result = PolyObject(
     flags: loPhysics,
-    center: newVector2(x, y)
+    center: initVector2(x, y)
   )
   result.collisionHull = newPolygonCollisionHull(poly)
 
@@ -35,7 +35,7 @@ method render(this: PolyObject) =
     halfWidth = this.collisionHull.width / 2
     halfHeight = this.collisionHull.height / 2
   this.collisionHull.render(
-    this.center - newVector2(halfWidth, halfHeight)
+    this.center - initVector2(halfWidth, halfHeight)
   )
 
 proc gameInit() =
@@ -43,29 +43,29 @@ proc gameInit() =
   poly1 = newPolyObject(
     30, 20,
     newPolygon([
-      newVector2(0, 0),
-      newVector2(50, 0),
-      newVector2(50, 50),
-      newVector2(0, 50)
+      initVector2(0, 0),
+      initVector2(50, 0),
+      initVector2(50, 50),
+      initVector2(0, 50)
     ])
   )
   poly2 = newPolyObject(
     100, 50,
     newPolygon([
-      newVector2(50, 50),
-      newVector2(100, 50),
-      newVector2(100, 100),
-      newVector2(50, 100)
+      initVector2(50, 50),
+      initVector2(100, 50),
+      initVector2(100, 100),
+      initVector2(50, 100)
     ])
   )
 
 proc gameUpdate(dt: float32) =
   let m = mouse()
-  poly1.center = newVector2(m[0], m[1])
+  poly1.center = initVector2(m[0], m[1])
   collisionResult = collides(
     poly1.center,
     poly1.collisionHull,
-    newVector2(50, 0),
+    initVector2(50, 0),
     poly2.center,
     poly2.collisionHull,
     VectorZero

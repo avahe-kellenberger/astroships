@@ -1,9 +1,10 @@
+import options
 import
   collisionhull,
   collisionresult,
   ../vector2
 
-export 
+export
   collisionresult,
   collisionhull
 
@@ -12,7 +13,7 @@ type MinMaxProjectionInterval* = object
   minPoint: Vector2
   max: float
   maxPoint: Vector2
-  
+
 proc newMinMaxProjectionInterval*(
   min: float,
   minPoint: Vector2,
@@ -32,7 +33,7 @@ proc newMinMaxProjectionInterval*(
 
 func getMiddle*(this, interval: MinMaxProjectionInterval): MinMaxProjectionInterval =
   ## Gets the middle two projections of the 4 projections.
-  let 
+  let
     minInterval = if this.min > interval.min: this else: interval
     maxInterval = if this.max < interval.max: this else: interval
   return
@@ -61,19 +62,19 @@ func projectionFrom*(vertices: seq[Vector2], axis: Vector2): MinMaxProjectionInt
   var
     min = Inf
     max = NegInf
-    minPoint: Vector2 = nil
-    maxPoint: Vector2 = nil
+    minPoint: Option[Vector2]
+    maxPoint: Option[Vector2]
 
   for vert in vertices:
     let value = vert.dotProduct(axis)
     if value < min:
       min = value
-      minPoint = vert
+      minPoint = vert.option
     if value > max:
       max = value
-      maxPoint = vert
+      maxPoint = vert.option
 
-  if minPoint == nil or maxPoint == nil:
+  if minPoint.isNone or maxPoint.isNone:
     raise newException(
       Exception,
       "minPoint and/or maxPoint are null: make sure parameters are correct: " &
@@ -82,7 +83,7 @@ func projectionFrom*(vertices: seq[Vector2], axis: Vector2): MinMaxProjectionInt
       "Axis: " & axis.repr
     )
 
-  return newMinMaxProjectionInterval(min, minPoint, max, maxPoint)
+  return newMinMaxProjectionInterval(min, minPoint.get, max, maxPoint.get)
 
 proc translateVertices(vertices: seq[Vector2], delta: Vector2): seq[Vector2] =
   for i in 0..<vertices.len:
@@ -128,7 +129,7 @@ func getContactPoint(
   if otherFarthestPoints.len == 1:
     return otherFarthestPoints[0]
 
-  let ownerFarthestPoints = 
+  let ownerFarthestPoints =
     translateVertices(
       ownerHull.getFarthest(ownerContactNormal),
       ownerLoc
@@ -209,7 +210,7 @@ func normalizeNormal(isA: bool, axis, projA, projB: Vector2): Vector2 =
   ## @param axis The projection axis from the shape (outward from shape).
   ## @param projA The projection of shape A onto the axis (relative to the axis direction)
   ## @param projB The projection of shape B onto the axis (relative to the axis direction)
-  let 
+  let
     centerProjA = (projA.x + projA.y) # * 0.5 (unneeded because we only compare)
     centerProjB = (projB.x + projB.y) # * 0.5 (unneeded because we only compare)
   return if isA == (centerProjA > centerProjB): axis.negate() else: axis
@@ -224,7 +225,7 @@ proc collides*(
 ): CollisionResult =
   ## Performs the SAT algorithm on the given collision hulls
   ## to determine whether they are colliding or will collide.
-  ## 
+  ##
   ## All locations and move vectors are relative to hullB.
   ##
   ## @param locA:
@@ -249,7 +250,7 @@ proc collides*(
   ##   A collision result containing information for collision resolution,
   ##   or nil if the collision hulls are not and will not collide.
   ##
-  let 
+  let
     # Get the location of A relative to B (assume B is at origin)
     relativeLocation = locA - locB
     # Get the move vector of A relative to B.
@@ -266,10 +267,10 @@ proc collides*(
   var
     isShapeA_MTV = true
     intrusion_MTV = Inf
-    mtvNormal: Vector2
+    mtvNormal: Option[Vector2]
     isShapeA_Contact = true
     intrusion_Contact = 0f
-    contactNormal: Vector2
+    contactNormal: Option[Vector2]
     minExitTimeRatio = Inf
     maxEnterTimeRatio = NegInf
 
@@ -289,7 +290,7 @@ proc collides*(
     # Calculate contact time ratio
     var enterTimeRatio: float
     var exitTimeRatio: float
-    if projA.x > projB.y: 
+    if projA.x > projB.y:
       # A is to the right of B
       if moveVectorProjection >= 0:
         return nil
@@ -331,7 +332,7 @@ proc collides*(
 
     if overlap < intrusion_MTV:
       intrusion_MTV = overlap
-      mtvNormal = normalizeNormal(isA, axis, projA, projB)
+      mtvNormal = normalizeNormal(isA, axis, projA, projB).option
       isShapeA_MTV = isA
 
     minExitTimeRatio = min(minExitTimeRatio, exitTimeRatio)
@@ -339,30 +340,30 @@ proc collides*(
     if enterTimeRatio > maxEnterTimeRatio:
       maxEnterTimeRatio = enterTimeRatio
       intrusion_Contact = overlap
-      contactNormal = normalizeNormal(isA, axis, projA, projB)
+      contactNormal = normalizeNormal(isA, axis, projA, projB).option
       isShapeA_Contact = isA
 
   if maxEnterTimeRatio <= minExitTimeRatio:
-    if contactNormal != nil:
+    if contactNormal.isSome:
       # Dynamic collision
-      let moveVectorDot = contactNormal.dotProduct(relativeMoveVector)
+      let moveVectorDot = contactNormal.get.dotProduct(relativeMoveVector)
       if moveVectorDot != 0:
         # Calculate the location of hullA at time of collision
         let collisionLocA = locA + (relativeMoveVector * maxEnterTimeRatio)
         return newCollisionResult(
           isShapeA_Contact,
           intrusion_Contact,
-          contactNormal,
-          getContactPoint(collisionLocA, hullA, locB, hullB, contactNormal, isShapeA_Contact),
+          contactNormal.get,
+          getContactPoint(collisionLocA, hullA, locB, hullB, contactNormal.get, isShapeA_Contact),
           maxEnterTimeRatio
         )
-    elif mtvNormal != nil:
+    elif mtvNormal.isSome:
       # Static collision
       return newCollisionResult(
         isShapeA_MTV,
         intrusion_MTV,
-        mtvNormal,
-        getContactPoint(locA, hullA, locB, hullB, mtvNormal, isShapeA_Contact)
+        mtvNormal.get,
+        getContactPoint(locA, hullA, locB, hullB, mtvNormal.get, isShapeA_Contact)
       )
   # No collision
   return nil

@@ -18,13 +18,13 @@ export
 type Polygon* = ref object
   vertices: seq[Vector2]
   bounds: Rectangle
-  center: Vector2
+  center: Option[Vector2]
   clockwise: Option[bool]
 
 proc newPolygon*(vertices: openArray[Vector2]): Polygon =
   if vertices.len < 3:
     raise newException(Exception, "Polygon must have at least 3 vertices.")
-  return Polygon(vertices: toSeq(vertices))
+  result = Polygon(vertices: toSeq(vertices))
 
 func len*(this: Polygon): int = this.vertices.len
 
@@ -40,7 +40,7 @@ iterator pairs*(this: Polygon): (int, Vector2) =
 
 func project*(this: Polygon, location, axis: Vector2): Vector2 =
   let startLoc = this[0] + location
-  var 
+  var
     dotProduct = axis.dotProduct(startLoc)
     min = dotProduct
     max = dotProduct
@@ -51,7 +51,7 @@ func project*(this: Polygon, location, axis: Vector2): Vector2 =
       min = dotProduct
     if dotProduct > max:
       max = dotProduct
-  return newVector2(min, max)
+  return initVector2(min, max)
 
 func getLinePixels*(v1, v2: Vector2, outPixels: var seq[Vector2]) =
   ## Generates an array of points which lie on the parameterized line.
@@ -63,7 +63,7 @@ func getLinePixels*(v1, v2: Vector2, outPixels: var seq[Vector2]) =
   ##
   ## @param outPixels:
   ##   The array of pixels to add the pixel locations to.
-  let 
+  let
     edgeX = v2.x - v1.x
     edgeY = v2.y - v1.y
   var slope = edgeY / edgeX
@@ -80,7 +80,7 @@ func getLinePixels*(v1, v2: Vector2, outPixels: var seq[Vector2]) =
       x = v1.x
       y = v1y
     while y != v2y:
-      outPixels.add(newVector2(round(x), y))
+      outPixels.add(initVector2(round(x), y))
       x += inverseSlope
       y += signY
   else:
@@ -95,7 +95,7 @@ func getLinePixels*(v1, v2: Vector2, outPixels: var seq[Vector2]) =
       x = v1x
       y = v1.y
     while x != v2x:
-      outPixels.add(newVector2(x, round(y)))
+      outPixels.add(initVector2(x, round(y)))
       x += signX
       y += slope
 
@@ -115,14 +115,14 @@ func getAverage*(this: Polygon): Vector2 =
     x += v.x;
     y += v.y;
   let d = 1.0 / this.len.float;
-  return newVector2(x * d, y * d)
+  return initVector2(x * d, y * d)
 
 func getBounds*(this: Polygon): Rectangle =
   ## Calculates the bounds of the polygon.
   if this.bounds != nil:
     # Bounds are lazy initialized.
     return this.bounds
-  var 
+  var
     minX = Inf
     minY = Inf
     maxX = NegInf
@@ -132,7 +132,7 @@ func getBounds*(this: Polygon): Rectangle =
     minY = min(minY, v.y)
     maxX = max(maxX, v.x)
     maxY = max(maxY, v.y)
-  this.bounds = 
+  this.bounds =
     newRectangle(
       minX,
       minY,
@@ -142,8 +142,8 @@ func getBounds*(this: Polygon): Rectangle =
   return this.bounds
 
 func getCenter*(this: Polygon): Vector2 =
-  if this.center != nil:
-    return this.center
+  if this.center.isSome:
+    return this.center.get
 
   var
     area = 0f
@@ -162,8 +162,8 @@ func getCenter*(this: Polygon): Vector2 =
   let area6 = 1.0 / (area * 6.0)
   x *= area6
   y *= area6
-  this.center = newVector2(x, y)
-  return this.center
+  this.center = some(initVector2(x, y))
+  return this.center.get
 
 template getWidth*(this: Vector2): float = this.getBounds().width
 template getHeight*(this: Vector2): float = this.getBounds().height
@@ -187,7 +187,7 @@ proc createRandomConvex*(vertexCount: int, width, height: float): Polygon =
   ## @param width:
   ##   The width of the polygon to generate.
   ##
-  ## @param height: 
+  ## @param height:
   ##   The height of the polygon to generate.
   var
     xCoords: seq[float]
@@ -203,7 +203,7 @@ proc createRandomConvex*(vertexCount: int, width, height: float): Polygon =
 
   # Get min and max X and Y values.
   block _:
-    let 
+    let
       minX = xCoords[0]
       maxX = xCoords[vertexCount - 1] - minX
       minY = yCoords[0]
@@ -252,7 +252,7 @@ proc createRandomConvex*(vertexCount: int, width, height: float): Polygon =
   # Combine the paired up components into vectors.
   var vectors: seq[Vector2]
   for i in 0..<vertexCount:
-    vectors.add(newVector2(xComponents[i], yComponents[i]))
+    vectors.add(initVector2(xComponents[i], yComponents[i]))
 
   # Sort the vectors by angle.
   vectors = vectors.sortedByIt(it.getAngleRadians())
@@ -263,7 +263,7 @@ proc createRandomConvex*(vertexCount: int, width, height: float): Polygon =
     points: seq[Vector2]
 
   for i in 0..<vertexCount:
-    points.add(newVector2(x, y))
+    points.add(initVector2(x, y))
     x += vectors[i].x
     y += vectors[i].y
     minPolyX = min(minPolyX, x)
@@ -280,13 +280,13 @@ proc isClockwise*(this: Polygon): bool =
   ## Determines whether the polygon's vertices wind in the clockwise direction.
   ##
   ## How to determine if a list of polygon points are in clockwise-order:
-  ## http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order 
+  ## http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
   ##
   ## Complexity: O(n), where 'n' is the number of vertices in the polygon.
   ## @returns {boolean} true if the polygon vertices wind the clockwise direction,
   ## or false if they wind in the counter-clockwise direction.
   if this.clockwise.isNone:
-    var 
+    var
       sum = 0f
       lastV = this[this.len - 1]
       currV: Vector2

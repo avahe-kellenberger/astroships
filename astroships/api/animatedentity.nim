@@ -28,10 +28,10 @@ proc newAnimatedEntity*(
   x, y: float,
   spriteWidth, spriteHeight: int = 1
 ): AnimatedEntity =
-  AnimatedEntity(
+  result = AnimatedEntity(
     flags: loUpdateRender,
     spritesheetIndex: spritesheetIndex,
-    center: newVector2(x, y),
+    center: initVector2(x, y),
     spriteWidth: spriteWidth,
     spriteHeight: spriteHeight
   )
