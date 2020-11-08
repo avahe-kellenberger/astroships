@@ -19,6 +19,10 @@ template `$`*(this: Vector2): string =
 
 # Add
 
+proc `+=`*(this: var Vector2, v: Vector2) =
+  this.x += v.x
+  this.y += v.y
+
 func `+`*(this, v: Vector2): Vector2 =
   initVector2(this.x + v.x, this.y + v.y)
 

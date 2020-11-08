@@ -22,6 +22,7 @@ template includes*(this, flags: LayerObjectFlags): bool =
 type Entity* = ref object of RootObj
   flags*: LayerObjectFlags
   center*: Vector2
+  # Pixels per second.
   velocity*: Vector2
   collisionHull*: CollisionHull
 
@@ -35,12 +36,15 @@ template x*(this: Entity): float = this.center.x
 template y*(this: Entity): float = this.center.y
 
 method bounds*(this: Entity): Rectangle {.base.} =
+  ## Gets the bounds of the Entity's collision hull.
+  ## The bounds are relative to the center of the object.
   if this.collisionHull != nil:
     return this.collisionHull.getBounds()
 
 method hash*(this: Entity): Hash {.base.} = hash(this[].unsafeAddr)
 
-method update*(this: Entity, deltaTime: float) {.base.} = discard
+method update*(this: Entity, deltaTime: float) {.base.} =
+  this.center += this.velocity * deltaTime
 
 method render*(this: Entity) {.base.} = discard
 

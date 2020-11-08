@@ -2,7 +2,7 @@ import nico
 
 import random
 
-import 
+import
   api,
   objects/explosion as exp
 
@@ -18,11 +18,17 @@ integerScale(true)
 var
   astroPal = loadPaletteFromGPL("pal/astroships.gpl")
   explosion: Explosion
+  explosionHull: CollisionHull
   polyTest: Polygon
 
 proc gameInit() =
   setPalette(astroPal)
-  explosion = newExplosion(32, 15)
+  explosion = newExplosion(32, 25)
+  explosion.velocity = initVector2(10, 20)
+  let radius = max(explosion.spriteWidth, explosion.spriteHeight).float * 0.5
+  explosionHull = newCircleCollisionHull(newCircle(VectorZero, radius))
+  explosion.collisionHull = explosionHull
+
   polyTest = newPolygon([
     initVector2(50, 50),
     initVector2(100, 50),
@@ -40,10 +46,11 @@ proc gameDraw() =
   setColor(1)
   print("click for explosion!", 10, 10)
 
-  if (mousebtnp(0)):
+  if mousebtnp(0):
     explosion.resetAnimation()
 
   explosion.render()
+  explosionHull.render(explosion.center)
   polyTest.render()
 
 nico.run(gameInit, gameUpdate, gameDraw)
