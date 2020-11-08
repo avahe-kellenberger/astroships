@@ -1,6 +1,6 @@
 import entity
 
-type 
+type
   ZChangeListener = proc(oldZ, newZ: float): void
   ## Layer is a container of entities that exist on a two-dimensional plane,
   ## perpendicular to the camera which views the game.
@@ -41,7 +41,7 @@ proc addZChangeListenerOnce*(this: Layer, listener: ZChangeListener): ZChangeLis
   ## Add a listener that is removed automatically after one invocation.
   ## Returns the listener that was directly added to the Layer.
   ## Use this returned object if you need to remove the listener early.
-  let onceListener = 
+  let onceListener =
     proc(oldZ, newZ: float) =
       listener(oldZ, newZ)
       this.removeZChangeListener(listener)
@@ -73,11 +73,11 @@ template remove*(this: Layer, obj: Entity) =
 
 method update*(this: Layer, deltaTime: float) {.base.} =
   for e in this:
-    if e.flags and loUpdate:
+    if e.flags.includes(loUpdate):
       e.update(deltaTime)
 
 method render*(this: Layer) {.base.} =
   for e in this:
-    if e.flags and loRender:
+    if e.flags.includes(loRender):
       e.render()
 

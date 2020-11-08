@@ -1,3 +1,9 @@
+## CollisionHulls are the shapes used to determine collisions between objects.
+##
+## The hull location is relative to its owner,
+## so the hull should be centered around the origin (0, 0),
+## if the goal is to center it on its owner for collisions.
+
 import
   math
 
@@ -40,8 +46,15 @@ proc getBounds*(this: CollisionHull): Rectangle =
 
   return this.bounds
 
-proc width*(this: CollisionHull): float = this.getBounds().width
-proc height*(this: CollisionHull): float = this.getBounds().height
+template width*(this: CollisionHull): float = this.getBounds().width
+template height*(this: CollisionHull): float = this.getBounds().height
+
+template center*(this: CollisionHull): Vector2 =
+  case this.kind:
+  of chkPolygon:
+    this.polygon.center
+  of chkCirle:
+    this.circle.center
 
 func getCircleToCircleProjectionAxes(circleA, circleB: Circle, aToB: Vector2): seq[Vector2] =
   result.add(
@@ -74,7 +87,7 @@ func getCircleToPolygonProjectionAxes(
   poly: Polygon,
   circleToPoly: Vector2
 ): seq[Vector2] =
-  for i in 0..poly.len:
+  for i in 0..<poly.len:
     result.add(
       normalize((poly[i] - circle.center) - circleToPoly)
     )

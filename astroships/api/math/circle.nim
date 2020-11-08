@@ -12,13 +12,13 @@ proc newCircle*(center: Vector2, radius: float): Circle =
   )
 
 proc newCircle*(centerX, centerY, radius: float): Circle =
-  return newCircle(newVector2(centerX, centerY), radius)
+  return newCircle(initVector2(centerX, centerY), radius)
 
 func project*(this: Circle, location, axis: Vector2): Vector2 =
   let
     newLoc = this.center + location
     centerDot = axis.dotProduct(newLoc)
-  return newVector2(centerDot - this.radius, centerDot + this.radius)
+  return initVector2(centerDot - this.radius, centerDot + this.radius)
 
 proc render*(this: Circle, offset: Vector2 = VectorZero) =
   circ(offset.x + this.center.x, offset.y + this.center.y, this.radius)

@@ -13,12 +13,12 @@ proc newRectangle*(x, y, width, height: float): Rectangle =
     width: width,
     height: height
   )
-  result.topLeft = newVector2(result.x, result.y)
-  result.center = newVector2(
+  result.topLeft = initVector2(result.x, result.y)
+  result.center = initVector2(
     result.x + result.width / 2,
     result.y + result.height / 2
   )
-  result.bottomRight = newVector2(
+  result.bottomRight = initVector2(
     result.x + result.width,
     result.y + result.height
   )
@@ -31,6 +31,7 @@ template height*(this: Rectangle): float = this.height
 template topLeft*(this: Rectangle): Vector2 = this.topLeft
 template center*(this: Rectangle): Vector2 = this.center
 template bottomRight*(this: Rectangle): Vector2 = this.bottomRight
+template halfSize*(this: Rectangle): Vector2 = this.center - this.topLeft
 
 proc getScaledInstance*(this: Rectangle, scalar: float): Rectangle =
   newRectangle(

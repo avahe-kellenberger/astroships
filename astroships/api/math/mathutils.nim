@@ -143,7 +143,7 @@ func linearBezierVector*(t: float, p0, p1: Vector2): Vector2 =
   ## @param {float} t The ratio of completion (0.0 starting point, 1.0 finishing point).
   ## @param {Vector2} p0 The starting point.
   ## @param {Vector2} p1 The ending point.
-  return newVector2(linearBezier(t, p0.x, p1.x), linearBezier(t, p0.y, p1.y))
+  return initVector2(linearBezier(t, p0.x, p1.x), linearBezier(t, p0.y, p1.y))
 
 func quadraticBezier*(t, p0, p1, p2: float): float =
   ## Calculates the quadratic Bezier curve of three values.
@@ -161,7 +161,7 @@ func quadraticBezierVector*(t: float, p0, p1, p2: Vector2): Vector2 =
   ## @param {Vector2} p0 The initial point.
   ## @param {Vector2} p1 The point being approached, but not reached.
   ## @param {Vector2} p2 The point being reached.
-  return newVector2(quadraticBezier(t, p0.x, p1.x, p2.x), quadraticBezier(t, p0.y, p1.y, p2.y))
+  return initVector2(quadraticBezier(t, p0.x, p1.x, p2.x), quadraticBezier(t, p0.y, p1.y, p2.y))
 
 func cubicBezier*(t, p0, p1, p2, p3: float): float =
   ## Calculates the cubic Bezier curve of 4 values.
@@ -185,5 +185,5 @@ func cubicBezierVector*(t: float, p0, p1, p2, p3: Vector2): Vector2 =
   ## @param {Vector2} p1 The first point to approach.
   ## @param {Vector2} p2 The second point to approach.
   ## @param {Vector2} p3 The end point.
-  return newVector2(cubicBezier(t, p0.x, p1.x, p2.x, p3.x), cubicBezier(t, p0.y, p1.y, p2.y, p3.y))
+  return initVector2(cubicBezier(t, p0.x, p1.x, p2.x, p3.x), cubicBezier(t, p0.y, p1.y, p2.y, p3.y))
 

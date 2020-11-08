@@ -2,9 +2,10 @@ import api/
   [
     scene,
     layer,
+    physicslayer,
     entity,
-    gameobject,
     animation,
+    animatedentity,
     math/vector2,
     math/polygon,
     math/rectangle,
@@ -17,9 +18,10 @@ import api/
 export
   scene,
   layer,
+  physicslayer,
   entity,
-  gameobject,
   animation,
+  animatedentity,
   vector2,
   polygon,
   rectangle,

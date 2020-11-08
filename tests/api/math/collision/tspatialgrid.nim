@@ -12,25 +12,23 @@ suite "spatialgrid":
     grid.clear()
 
   test "Add and query an object":
-    var obj = newGameObject(
-      spritesheetIndex = 0,
+    var obj = newEntity(
+      flags = loPhysics,
       x = 45,
       y = 85,
-      spriteWidth = 20,
-      spriteHeight = 20
     )
 
     let objCenter = obj.center
     obj.collisionHull = newCircleCollisionHull(newCircle(objCenter, 10))
 
-    let objBounds = obj.getBounds()
+    let objBounds = obj.bounds()
     check objBounds != nil
 
     ## Add the object to the grid after creating its collision hull.
-    grid.add(obj)
+    grid.addEntity(obj, obj.lastMoveVector)
 
     # Query the grid at the object's location.
-    let queriedObjects = grid.query(objBounds)
+    let (queriedObjects, _) = grid.query(objBounds)
     check queriedObjects.len == 1
     check obj in queriedObjects
 
