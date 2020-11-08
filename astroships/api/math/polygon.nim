@@ -141,7 +141,7 @@ func getBounds*(this: Polygon): Rectangle =
     )
   return this.bounds
 
-func getCenter*(this: Polygon): Vector2 =
+func center*(this: Polygon): Vector2 =
   ## Gets the centroid of the Polygon.
   if this.center.isSome:
     return this.center.get

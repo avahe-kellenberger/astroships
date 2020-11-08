@@ -11,18 +11,19 @@ export
   entity
 
 type
+  CellID = string
   SpatialCell = object
-    cellID: string
+    cellID: CellID
     entities: HashSet[Entity]
   SpatialGrid* = ref object
     # All entities is the grid.
     entities: HashSet[Entity]
-    cells: TableRef[string, SpatialCell]
+    cells: TableRef[CellID, SpatialCell]
     cellSize: Positive
     # Scalar from grid coords to game coords.
     gridToPixelScalar: float
 
-proc newSpatialCell(cellID: string): SpatialCell = SpatialCell(cellID: cellID)
+proc newSpatialCell(cellID: CellID): SpatialCell = SpatialCell(cellID: cellID)
 
 template add(this: var SpatialCell, entity: Entity) =
   this.entities.incl(entity)
@@ -42,7 +43,7 @@ proc newSpatialGrid*(width, height, cellSize: Positive): SpatialGrid =
   ##  The size of each cell in the grid.
   ##  This should be approx. double the size of the average entity.
   SpatialGrid(
-    cells: newTable[string, SpatialCell](width * height),
+    cells: newTable[CellID, SpatialCell](width * height),
     cellSize: cellSize.int,
     gridToPixelScalar: 1.0 / cellSize.float
   )
@@ -51,7 +52,7 @@ iterator items*(this: SpatialGrid): Entity =
   for e in this.entities:
     yield e
 
-template getKeyID(cellX, cellY: int): string =
+template getCellID(cellX, cellY: int): CellID =
   $cellX & "," & $cellY
 
 template scaleToGrid*(this: SpatialGrid, rect: Rectangle): Rectangle =
@@ -81,21 +82,36 @@ proc add*(this: SpatialGrid, entity: Entity) =
   # Add the entity to all cells its bounds intersect with.
   let entityBounds = this.scaleToGrid(entity.bounds())
   for cell in this.cellInBounds(entityBounds):
-    let keyID = getKeyID(cell.x, cell.y)
-    var cell = this.cells.getOrDefault(keyID, newSpatialCell(keyID))
+    let cellID = getCellID(cell.x, cell.y)
+    var cell = this.cells.getOrDefault(cellID, newSpatialCell(cellID))
     cell.add(entity)
-    this.cells[keyID] = cell
+    this.cells[cellID] = cell
 
-proc query*(this: SpatialGrid, bounds: Rectangle): HashSet[Entity] =
+proc removeFromCells*(
+  this: var SpatialGrid,
+  entity: Entity,
+  cellIDs: openArray[CellID]
+) =
+  ## Removes the entity from all given cells.
+  for id in cellIDs:
+    if this.cells.hasKey(id):
+      this.cells[id].entities.excl(entity)
+
+proc query*(
+  this: SpatialGrid,
+  bounds: Rectangle
+): tuple[entities: HashSet[Entity], cellIDs: seq[CellID]] =
+
   let scaledBounds: Rectangle = this.scaleToGrid(bounds)
   # Find all cells that intersect with the bounds.
   for x, y in this.cellInBounds(scaledBounds):
-    let keyID = getKeyID(x, y)
-    if this.cells.hasKey(keyID):
-      let cell = this.cells[keyID]
+    let cellID = getCellID(x, y)
+    if this.cells.hasKey(cellID):
+      result.cellIDs.add(cellID)
+      let cell = this.cells[cellID]
       # Add all entityects in each cell.
       for entity in cell.forEachEntity:
-        result.incl(entity)
+        result.entities.incl(entity)
 
 proc clear*(this: SpatialGrid) =
   ## Clears the entire grid.

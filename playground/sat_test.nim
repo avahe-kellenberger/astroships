@@ -16,10 +16,11 @@ nico.createWindow("SAT Playground", screenWidth, screenHeight, screenScale)
 fixedSize(true)
 integerScale(true)
 
-type PolyObject = ref object of GameObject
+type PolyObject = ref object of Entity
 
 var
   astroPal = loadPaletteFromGPL("../../assets/pal/astroships.gpl")
+  layer: PhysicsLayer
   poly1, poly2: PolyObject
   collisionResult: CollisionResult
 
@@ -31,50 +32,48 @@ proc newPolyObject(x, y: float, poly: Polygon): PolyObject =
   result.collisionHull = newPolygonCollisionHull(poly)
 
 method render(this: PolyObject) =
-  let
-    halfWidth = this.collisionHull.width / 2
-    halfHeight = this.collisionHull.height / 2
-  this.collisionHull.render(
-    this.center - initVector2(halfWidth, halfHeight)
-  )
+  this.collisionHull.render(this.center)
+
+proc collisionListener(objA, objB: Entity, res: CollisionResult) =
+  collisionResult = res
 
 proc gameInit() =
   setPalette(astroPal)
+  let grid = newSpatialGrid(screenWidth, screenHeight, 50)
+  layer = newPhysicsLayer(grid)
   poly1 = newPolyObject(
     30, 20,
     newPolygon([
-      initVector2(0, 0),
-      initVector2(50, 0),
-      initVector2(50, 50),
-      initVector2(0, 50)
+      initVector2(-25, -25),
+      initVector2(25, -25),
+      initVector2(25, 25),
+      initVector2(-25, 25)
     ])
   )
   poly2 = newPolyObject(
     100, 50,
     newPolygon([
-      initVector2(50, 50),
-      initVector2(100, 50),
-      initVector2(100, 100),
-      initVector2(50, 100)
+      initVector2(-25, -25),
+      initVector2(25, -25),
+      initVector2(25, 25),
+      initVector2(-25, 25)
     ])
   )
 
+  layer.add(poly1)
+  layer.add(poly2)
+  layer.addCollisionListener(collisionListener)
+
 proc gameUpdate(dt: float32) =
   let m = mouse()
+  collisionResult = nil
   poly1.center = initVector2(m[0], m[1])
-  collisionResult = collides(
-    poly1.center,
-    poly1.collisionHull,
-    initVector2(50, 0),
-    poly2.center,
-    poly2.collisionHull,
-    VectorZero
-  )
+  layer.update(dt)
 
 proc renderCollisionResult =
   setColor(23)
   let x = screenWidth / 3
-  var 
+  var
     y = 72
     yOff = 16
   proc printLine(s: string) =

@@ -1,6 +1,5 @@
 {.experimental: "codeReordering".}
 
-import sets
 import
   layer,
   math/collision/spatialgrid as sgrid,
@@ -8,7 +7,6 @@ import
   entity
 
 export
-  sets,
   layer,
   entity
 
@@ -16,27 +14,29 @@ type
   CollisionListener* = proc(collisionOwner, collided: Entity, result: CollisionResult)
   PhysicsLayer* = ref object of Layer
     spatialGrid: SpatialGrid
-    collisionListeners: HashSet[CollisionListener]
+    collisionListeners: seq[CollisionListener]
 
 proc newPhysicsLayer*(grid: SpatialGrid, z: float = 1.0): PhysicsLayer =
   result = PhysicsLayer(spatialGrid: grid)
   result.z = z
 
 proc addCollisionListener*(this: var PhysicsLayer, listener: CollisionListener) =
-  this.collisionListeners.incl(listener)
+  this.collisionListeners.add(listener)
 
 proc removeCollisionListener*(this: var PhysicsLayer, listener: CollisionListener) =
-  this.collisionListeners.excl(listener)
+  for i, l in this.collisionListeners:
+    if l == listener:
+      this.collisionListeners.delete(i)
+      break
 
 proc removeAllCollisionListeners*(this: var PhysicsLayer) =
-  this.collisionListeners.clear()
+  this.collisionListeners.setLen(0)
 
 proc detectCollisions(this: PhysicsLayer, deltaTime: float) =
   ## Detects collisions between all objects in the spatial grid.
   ## When a collision occurs, all CollisionListeners will be notified.
-
-  # TODO: This probably causes collision checks between the same objects,
-  # e.g. test(objA, objB) and later test(objB, objA)
+  if this.collisionListeners.len == 0:
+    return
 
   # Perform collision checks.
   for objA in this.spatialGrid:
@@ -47,7 +47,7 @@ proc detectCollisions(this: PhysicsLayer, deltaTime: float) =
       boundsA = objA.bounds()
       moveVectorA = objA.velocity * deltaTime
 
-    let objectsInBounds = this.spatialGrid.query(boundsA)
+    let (objectsInBounds, cells) = this.spatialGrid.query(boundsA)
     # Iterate through collidable objects to check for collisions with the local object (objA).
     for objB in objectsInBounds:
 
@@ -78,18 +78,23 @@ proc detectCollisions(this: PhysicsLayer, deltaTime: float) =
       for listener in this.collisionListeners:
         listener(objA, objB, collisionResult)
 
+    # Remove the object so we don't have duplicate collision checks.
+    this.spatialGrid.removeFromCells(objA, cells)
+
 method update*(this: PhysicsLayer, deltaTime: float) =
   procCall Layer(this).update(deltaTime)
 
   # Add all entities to the spatial grid.
   for entity in this:
-    if entity.collisionHull != nil and (entity.flags or loPhysics):
+    if entity.collisionHull != nil and entity.flags.includes(loPhysics):
+      # TODO: We need to add based on move vector projections.
       this.spatialGrid.add(entity)
 
   # Detect collisions using the data in the spatial grid.
   # All listeners are notified.
   this.detectCollisions(deltaTime)
 
+  # TODO: We remove all objects, so we shouldn't need this anymore:
   # Remove everything from the grid.
-  this.spatialGrid.clear()
+  # this.spatialGrid.clear()
 

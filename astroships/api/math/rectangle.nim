@@ -31,6 +31,7 @@ template height*(this: Rectangle): float = this.height
 template topLeft*(this: Rectangle): Vector2 = this.topLeft
 template center*(this: Rectangle): Vector2 = this.center
 template bottomRight*(this: Rectangle): Vector2 = this.bottomRight
+template halfSize*(this: Rectangle): Vector2 = this.center - this.topLeft
 
 proc getScaledInstance*(this: Rectangle, scalar: float): Rectangle =
   newRectangle(

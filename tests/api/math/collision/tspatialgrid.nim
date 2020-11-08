@@ -28,7 +28,7 @@ suite "spatialgrid":
     grid.add(obj)
 
     # Query the grid at the object's location.
-    let queriedObjects = grid.query(objBounds)
+    let (queriedObjects, _) = grid.query(objBounds)
     check queriedObjects.len == 1
     check obj in queriedObjects
 
