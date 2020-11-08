@@ -24,6 +24,7 @@ type Entity* = ref object of RootObj
   center*: Vector2
   # Pixels per second.
   velocity*: Vector2
+  lastMoveVector*: Vector2
   collisionHull*: CollisionHull
 
 proc newEntity*(flags: LayerObjectFlags, x, y: float = 0f): Entity =
@@ -44,7 +45,8 @@ method bounds*(this: Entity): Rectangle {.base.} =
 method hash*(this: Entity): Hash {.base.} = hash(this[].unsafeAddr)
 
 method update*(this: Entity, deltaTime: float) {.base.} =
-  this.center += this.velocity * deltaTime
+  this.lastMoveVector = this.velocity * deltaTime
+  this.center += this.lastMoveVector
 
 method render*(this: Entity) {.base.} = discard
 

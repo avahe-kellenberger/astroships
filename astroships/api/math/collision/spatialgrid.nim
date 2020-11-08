@@ -69,23 +69,49 @@ iterator cellInBounds*(this: SpatialGrid, queryRect: Rectangle): tuple[x, y: int
     for y in floor(topLeft.y).int .. floor(bottomRight.y).int:
       yield (x, y)
 
-proc add*(this: SpatialGrid, entity: Entity) =
+template addEntityWithBounds(this: SpatialGrid, entity: Entity, bounds: Rectangle) =
   ## Adds an entity to the grid.
-  ## If the entity's bounds are nil, this proc will do nothing.
-  if entity.bounds() == nil or
-     not entity.flags.includes(loPhysics):
-    return
-
-  # Register the entity in the grid.
+  ## Assumes the bounds are not nil.
   this.entities.incl(entity)
-
-  # Add the entity to all cells its bounds intersect with.
-  let entityBounds = this.scaleToGrid(entity.bounds())
-  for cell in this.cellInBounds(entityBounds):
+  for cell in this.cellInBounds(bounds):
     let cellID = getCellID(cell.x, cell.y)
     var cell = this.cells.getOrDefault(cellID, newSpatialCell(cellID))
     cell.add(entity)
     this.cells[cellID] = cell
+
+template canEntityBeAdded(this: SpatialGrid, entity: Entity): bool =
+  entity.bounds() != nil and entity.flags.includes(loPhysics)
+
+proc addStaticEntity*(this: SpatialGrid, entity: Entity) =
+  ## Adds an entity to the grid.
+  ## If the entity's bounds are nil, this proc will do nothing.
+  if not this.canEntityBeAdded(entity):
+    return
+
+  # Add the entity to all cells its bounds intersect with.
+  let bounds = this.scaleToGrid(entity.bounds())
+  this.addEntityWithBounds(entity, bounds)
+
+proc getRectangleMovementBounds(this: Rectangle, delta: Vector2): Rectangle =
+  let
+    minX = if delta.x > 0.0: this.x else: this.x + delta.x
+    minY = if delta.y > 0.0: this.y else: this.y + delta.y
+    width = this.width + abs(delta.x)
+    height = this.height + abs(delta.y)
+
+  return newRectangle(
+    minX, minY,
+    width, height
+  )
+
+proc addEntity*(this: SpatialGrid, entity: Entity, deltaMovement: Vector2) =
+  ## Adds an entity to the grid.
+  ## If the entity's bounds are nil, this proc will do nothing.
+  if not this.canEntityBeAdded(entity):
+    return
+
+  let bounds = entity.bounds.getRectangleMovementBounds(deltaMovement)
+  this.addEntityWithBounds(entity, this.scaleToGrid(bounds))
 
 proc removeFromCells*(
   this: var SpatialGrid,

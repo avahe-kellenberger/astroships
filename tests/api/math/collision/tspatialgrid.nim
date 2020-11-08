@@ -25,7 +25,7 @@ suite "spatialgrid":
     check objBounds != nil
 
     ## Add the object to the grid after creating its collision hull.
-    grid.add(obj)
+    grid.addEntity(obj, obj.lastMoveVector)
 
     # Query the grid at the object's location.
     let (queriedObjects, _) = grid.query(objBounds)
