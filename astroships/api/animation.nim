@@ -66,6 +66,12 @@ proc newAnimation*(
     reverseAtEnd
   )
 
+template `[]`*(this: Animation, index: Natural): AnimationFrame =
+  this.frames[index]
+
+proc frameCount*(this: Animation): Natural =
+  this.frames.len
+
 proc getCurrentFrame*(this: Animation, elapsed: float): AnimationFrame =
   ## Gets the frame index based on the time elapsed
   ## since the animation first started.
