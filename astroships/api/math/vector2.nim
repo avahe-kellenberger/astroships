@@ -12,6 +12,8 @@ proc initVector2*(x, y: float): Vector2 =
 proc initVector2*(x, y: int): Vector2 =
   Vector2(x: x.float, y: y.float)
 
+template toVector2*(v: (int, int)): Vector2 = initVector2(v[0], v[1])
+
 template VectorZero*: Vector2 = initVector2(0.0, 0.0)
 
 template `$`*(this: Vector2): string =
@@ -123,8 +125,8 @@ func getAngleRadiansTo*(this, v: Vector2): float =
   ## Gets the angle of this vector to `v`, in radians.
   ## (from -pi to pi)
   arctan2(
-    this.crossProduct(v),
-    this.dotProduct(v)
+    v.y - this.y,
+    v.x - this.x
   )
 
 func getAngleTo*(this, v: Vector2): float =

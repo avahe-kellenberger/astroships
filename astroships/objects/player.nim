@@ -1,6 +1,7 @@
 import sequtils
 import nico
 import ../api/animatedentity
+import ../api/math/vector2
 
 export animatedentity
 
@@ -51,4 +52,10 @@ method updateCurrentAnimation(this: Player, deltaTime: float) =
 
 method getCurrentAnimationFrame*(this: Player): AnimationFrame =
   return this.currentAnimation[this.level mod this.currentAnimation.frameCount]
+
+method update*(this: Player, deltaTime: float) =
+  procCall AnimatedEntity(this).update(deltaTime)
+  let mouseLoc = toVector2(mouse())
+  let angleToMouse = this.center.getAngleRadiansTo(mouseLoc)
+  this.rotation = angleToMouse
 

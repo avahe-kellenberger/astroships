@@ -4,7 +4,8 @@ import random
 
 import
   api,
-  objects/explosion as exp
+  objects/explosion as exp,
+  objects/player as plyr
 
 # Random is used in different modules,
 # and needs to be initialized globally.
@@ -23,7 +24,8 @@ integerScale(true)
 var
   astroPal = loadPaletteFromGPL("pal/astroships.gpl")
   layer: PhysicsLayer
-  rectObj = newEntity(loPhysics, 50, 115)
+  rectObj: Entity
+  player: Player
   collision = false
 
 proc collisionListener(objA, objB: Entity, res: CollisionResult) =
@@ -42,8 +44,9 @@ proc gameInit() =
 
   explosion.collisionHull = explosionHull
   explosion.velocity = initVector2(10, 20)
-  layer.add(explosion)
 
+  player = newPlayer(400, 400)
+  rectObj = newEntity(loPhysics, 50, 115)
   let myRect = newPolygon([
     initVector2(-25, -25),
     initVector2(25, -25),
@@ -53,6 +56,8 @@ proc gameInit() =
 
   rectObj.collisionHull = newPolygonCollisionHull(myRect)
   layer.add(rectObj)
+  layer.add(explosion)
+  layer.add(player)
 
 proc gameUpdate(dt: float32) =
   collision = false
@@ -60,7 +65,7 @@ proc gameUpdate(dt: float32) =
 
 proc gameDraw() =
   cls()
-  setColor(4)
+  setColor(0)
   rectfill(0, 0, windowWidth, windowHeight)
 
   layer.render()
