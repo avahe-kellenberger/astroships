@@ -19,7 +19,7 @@ type AnimatedEntity* = ref object of Entity
   spriteWidth*: int
   spriteHeight*: int
   animations: Table[string, Animation]
-  currentAnimation: Animation
+  currentAnimation*: Animation
   currentAnimationTime: float
   rotation*: float
 

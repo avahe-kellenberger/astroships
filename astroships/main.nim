@@ -3,7 +3,8 @@ import random
 
 import
   api,
-  objects/explosion as exp
+  objects/explosion as exp,
+  objects/player as plyr
 
 # Random is used in different modules,
 # and needs to be initialized globally.
@@ -22,7 +23,8 @@ integerScale(true)
 var
   astroPal = loadPaletteFromGPL("pal/astroships.gpl")
   layer: PhysicsLayer
-  rectObj = newEntity(loPhysics, 50, 115)
+  rectObj: Entity
+  player: Player
   collision = false
   control: Controller = newController()
 
@@ -33,7 +35,7 @@ layer = newPhysicsLayer(newSpatialGrid(windowWidth, windowHeight, 88))
 layer.addCollisionListener(collisionListener)
 
 let
-  explosion = newExplosion(50, 50)
+  explosion = newExplosion(150, 50)
   radius = max(explosion.spriteWidth, explosion.spriteHeight).float * 0.5
   explosionHull = newCircleCollisionHull(newCircle(VectorZero, radius))
 
@@ -44,6 +46,10 @@ layer.add(explosion)
 proc gameInit() =
   setPalette(astroPal)
 
+  control.debug = true
+
+  player = newPlayer(400, 400)
+  rectObj = newEntity(loPhysics, 200, 115)
   let myRect = newPolygon([
     initVector2(-25, -25),
     initVector2(25, -25),
@@ -53,18 +59,17 @@ proc gameInit() =
 
   rectObj.collisionHull = newPolygonCollisionHull(myRect)
   layer.add(rectObj)
+  layer.add(explosion)
+  layer.add(player)
 
 proc gameUpdate(dt: float32) =
   collision = false
   control.update(dt)
   layer.update(dt)
 
-  if control.accelerate:
-    explosion.velocity.x += 2.0
-
 proc gameDraw() =
   cls()
-  setColor(4)
+  setColor(0)
   rectfill(0, 0, windowWidth, windowHeight)
 
   layer.render()
@@ -74,6 +79,8 @@ proc gameDraw() =
 
   if collision:
     print("Collision!", 150, 20)
+
+  control.render()
 
 nico.run(gameInit, gameUpdate, gameDraw)
 

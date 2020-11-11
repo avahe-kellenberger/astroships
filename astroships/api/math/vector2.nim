@@ -12,6 +12,8 @@ proc initVector2*(x, y: float): Vector2 =
 proc initVector2*(x, y: int): Vector2 =
   Vector2(x: x.float, y: y.float)
 
+template toVector2*(v: (int, int)): Vector2 = initVector2(v[0], v[1])
+
 template VectorZero*: Vector2 = initVector2(0.0, 0.0)
 
 template `$`*(this: Vector2): string =
@@ -30,6 +32,10 @@ func add*(this: Vector2, x, y: float): Vector2 =
   initVector2(this.x + x, this.y + y)
 
 # Subtract
+
+proc `-=`*(this: var Vector2, v: Vector2) =
+  this.x -= v.x
+  this.y -= v.y
 
 func `-`*(this, v: Vector2): Vector2 =
   initVector2(this.x - v.x, this.y - v.y)
@@ -69,6 +75,12 @@ func getMagnitudeSquared*(this: Vector2): float =
 
 func getMagnitude*(this: Vector2): float =
   sqrt(this.getMagnitudeSquared())
+
+func maxMagnitude*(this: Vector2, magnitude: float): Vector2 =
+  let currMagnitude = this.getMagnitude()
+  if currMagnitude <= magnitude:
+    return this
+  return this * (magnitude / currMagnitude)
 
 func normalize*(this: Vector2, magnitude: float = 1.0): Vector2 =
   let scale = magnitude / this.getMagnitude()
@@ -123,8 +135,8 @@ func getAngleRadiansTo*(this, v: Vector2): float =
   ## Gets the angle of this vector to `v`, in radians.
   ## (from -pi to pi)
   arctan2(
-    this.crossProduct(v),
-    this.dotProduct(v)
+    v.y - this.y,
+    v.x - this.x
   )
 
 func getAngleTo*(this, v: Vector2): float =
