@@ -63,6 +63,9 @@ proc gameUpdate(dt: float32) =
   collision = false
   layer.update(dt)
 
+  if keyp(K_l):
+    player.level.inc
+
 proc gameDraw() =
   cls()
   setColor(0)

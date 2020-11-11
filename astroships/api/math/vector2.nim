@@ -33,6 +33,10 @@ func add*(this: Vector2, x, y: float): Vector2 =
 
 # Subtract
 
+proc `-=`*(this: var Vector2, v: Vector2) =
+  this.x -= v.x
+  this.y -= v.y
+
 func `-`*(this, v: Vector2): Vector2 =
   initVector2(this.x - v.x, this.y - v.y)
 
@@ -71,6 +75,12 @@ func getMagnitudeSquared*(this: Vector2): float =
 
 func getMagnitude*(this: Vector2): float =
   sqrt(this.getMagnitudeSquared())
+
+func maxMagnitude*(this: Vector2, magnitude: float): Vector2 =
+  let currMagnitude = this.getMagnitude()
+  if currMagnitude <= magnitude:
+    return this
+  return this * (magnitude / currMagnitude)
 
 func normalize*(this: Vector2, magnitude: float = 1.0): Vector2 =
   let scale = magnitude / this.getMagnitude()

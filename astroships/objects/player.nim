@@ -23,6 +23,8 @@ type
 
   Player* = ref object of AnimatedEntity
     level*: Natural
+    acceleration: float
+    maxSpeed: float
 
 # Implicitly convert enum names to a string.
 converter animToString*(animation: PlayerAnim): string = $animation
@@ -36,7 +38,9 @@ proc newPlayer*(x, y: int): Player =
       spritesheetIndex: spritesheetIndex,
       center: initVector2(x, y),
       spriteWidth: spriteWidth,
-      spriteHeight: spriteHeight
+      spriteHeight: spriteHeight,
+      acceleration: 800.0,
+      maxSpeed: 300.0
     )
   result.flags = loPhysics
 
@@ -55,7 +59,18 @@ method getCurrentAnimationFrame*(this: Player): AnimationFrame =
 
 method update*(this: Player, deltaTime: float) =
   procCall AnimatedEntity(this).update(deltaTime)
-  let mouseLoc = toVector2(mouse())
-  let angleToMouse = this.center.getAngleRadiansTo(mouseLoc)
+
+  let
+    mouseLoc = toVector2(mouse())
+    direction = (mouseLoc - this.center).normalize()
+    angleToMouse = direction.getAngleRadians()
+
   this.rotation = angleToMouse
+
+  if key(K_w):
+    this.velocity = (
+      this.velocity + (direction * this.acceleration * deltaTime)
+     ).maxMagnitude(this.maxSpeed)
+  elif key(K_s):
+    this.velocity -= this.velocity * deltaTime * 1.3
 
