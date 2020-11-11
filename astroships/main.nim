@@ -1,5 +1,4 @@
 import nico
-
 import random
 
 import
@@ -25,24 +24,25 @@ var
   layer: PhysicsLayer
   rectObj = newEntity(loPhysics, 50, 115)
   collision = false
+  control: Controller = newController()
 
 proc collisionListener(objA, objB: Entity, res: CollisionResult) =
   collision = true
 
+layer = newPhysicsLayer(newSpatialGrid(windowWidth, windowHeight, 88))
+layer.addCollisionListener(collisionListener)
+
+let
+  explosion = newExplosion(50, 50)
+  radius = max(explosion.spriteWidth, explosion.spriteHeight).float * 0.5
+  explosionHull = newCircleCollisionHull(newCircle(VectorZero, radius))
+
+explosion.collisionHull = explosionHull
+explosion.velocity = initVector2(0, 0)
+layer.add(explosion)
+
 proc gameInit() =
   setPalette(astroPal)
-
-  layer = newPhysicsLayer(newSpatialGrid(windowWidth, windowHeight, 88))
-  layer.addCollisionListener(collisionListener)
-
-  let
-    explosion = newExplosion(50, 50)
-    radius = max(explosion.spriteWidth, explosion.spriteHeight).float * 0.5
-    explosionHull = newCircleCollisionHull(newCircle(VectorZero, radius))
-
-  explosion.collisionHull = explosionHull
-  explosion.velocity = initVector2(10, 20)
-  layer.add(explosion)
 
   let myRect = newPolygon([
     initVector2(-25, -25),
@@ -56,7 +56,11 @@ proc gameInit() =
 
 proc gameUpdate(dt: float32) =
   collision = false
+  control.update(dt)
   layer.update(dt)
+
+  if control.accelerate:
+    explosion.velocity.x += 2.0
 
 proc gameDraw() =
   cls()
