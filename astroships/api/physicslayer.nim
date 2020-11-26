@@ -93,7 +93,6 @@ method update*(this: PhysicsLayer, deltaTime: float) =
   # All listeners are notified.
   this.detectCollisions(deltaTime)
 
-  # TODO: We remove all objects, so we shouldn't need this anymore:
   # Remove everything from the grid.
-  # this.spatialGrid.clear()
+  this.spatialGrid.clear()
 
