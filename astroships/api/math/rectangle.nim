@@ -41,6 +41,13 @@ proc getScaledInstance*(this: Rectangle, scalar: float): Rectangle =
     this.height * scalar
   )
 
+proc containsPoint*(x, y, width, height, pointX, pointY: float): bool =
+  return
+    pointX >= x and
+    pointX < x + width and
+    pointY >= y and
+    pointY < y + height
+
 template `$`*(this: Rectangle): string =
   "x: " & $this.x & ", y: " & $this.y &
   ", width: " & $this.width & ", height: " & $this.height

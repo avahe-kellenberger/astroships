@@ -7,7 +7,7 @@ export layer, entity
 
 type Scene* = ref object of RootObj
   layers: seq[Layer]
-  isLayerOrderValid: bool
+  isLayerOrderValid*: bool
 
 proc newScene*: Scene = 
   Scene(isLayerOrderValid: true)
@@ -31,6 +31,9 @@ proc sortLayers(this: Scene) =
       proc (x, y: Layer): int {.closure.} = (x.z - y.z).int,
       SortOrder.Descending
     )
+
+proc removeAllLayers*(this: Scene) =
+  this.layers.setLen(0)
 
 method update*(this: Scene, deltaTime: float) {.base.} =
   this.sortLayers()
