@@ -2,6 +2,7 @@ import sequtils
 import nico
 import ../api/animatedentity
 import ../api/math/vector2
+import ../api/math/collision/collisionhull
 
 export animatedentity
 
@@ -50,6 +51,14 @@ proc newPlayer*(x, y: int): Player =
   # Be sure to set the animation when finished.
   result.setAnimation(Level)
 
+  # Default player collision hull.
+  var poly = newPolygon(@[
+    initVector2(-8, -8),
+    initVector2(-8, 8),
+    initVector2(8, 0)
+  ])
+  result.collisionHull = newPolygonCollisionHull(poly)
+
 method updateCurrentAnimation(this: Player, deltaTime: float) =
   # Player animation is not updated by time.
   discard
@@ -65,7 +74,8 @@ method update*(this: Player, deltaTime: float) =
     direction = (mouseLoc - this.center).normalize()
     angleToMouse = direction.getAngleRadians()
 
-  this.rotation = angleToMouse
+  let deltaRotation = angleToMouse - this.rotation
+  this.rotate(deltaRotation)
 
   if key(K_w):
     this.velocity = (

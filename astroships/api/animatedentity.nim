@@ -21,7 +21,6 @@ type AnimatedEntity* = ref object of Entity
   animations: Table[string, Animation]
   currentAnimation*: Animation
   currentAnimationTime: float
-  rotation*: float
 
 proc newAnimatedEntity*(
   spritesheetIndex: int,
@@ -68,12 +67,18 @@ method renderCurrentAnimation(this: AnimatedEntity) {.base.} =
     spr(frame.index, topLeft.x, topLeft.y, hflip = frame.hflip, vflip = frame.vflip)
   else:
     # TODO: There's currently no way to flip AND rotate.
-    sprRot(frame.index, this.x, this.y, this.rotation)
+    sprRot(
+      frame.index,
+      this.x + this.collisionHull.center.x,
+      this.y + this.collisionHull.center.y,
+      this.rotation
+    )
 
 method update*(this: AnimatedEntity, deltaTime: float) =
   procCall Entity(this).update(deltaTime)
   this.updateCurrentAnimation(deltaTime)
 
 method render*(this: AnimatedEntity) =
+  procCall Entity(this).render()
   this.renderCurrentAnimation()
 

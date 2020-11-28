@@ -1,3 +1,4 @@
+import nico
 import hashes
 import
   math/[vector2, rectangle],
@@ -24,6 +25,7 @@ type Entity* = ref object of RootObj
   center*: Vector2
   # Pixels per second.
   velocity*: Vector2
+  rotation*: float
   lastMoveVector*: Vector2
   collisionHull*: CollisionHull
 
@@ -35,6 +37,10 @@ proc newEntity*(flags: LayerObjectFlags, x, y: float = 0f): Entity =
 
 template x*(this: Entity): float = this.center.x
 template y*(this: Entity): float = this.center.y
+
+template rotate*(this: Entity, deltaRotation: float) =
+  this.rotation += deltaRotation
+  this.collisionHull.rotate(deltaRotation)
 
 method bounds*(this: Entity): Rectangle {.base.} =
   ## Gets the bounds of the Entity's collision hull.
