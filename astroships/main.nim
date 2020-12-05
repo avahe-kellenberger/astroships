@@ -34,7 +34,6 @@ proc collisionListener(objA, objB: Entity, res: CollisionResult) =
   collision = true
 
 layer = newGameLayer(newSpatialGrid(windowWidth, windowHeight, 88))
-# layer = newPhysicsLayer(newSpatialGrid(windowWidth, windowHeight, 88))
 layer.addCollisionListener(collisionListener)
 
 let
@@ -61,9 +60,6 @@ proc gameInit() =
   ])
 
   rectObj.collisionHull = newPolygonCollisionHull(myRect)
-
-  echo "player: ", $player.collisionHull.getArea(), " ", $player.getMass()
-  echo "rect: ", $rectObj.collisionHull.getArea(), " ", $rectObj.getMass()
 
   layer.add(rectObj)
   layer.add(explosion)
