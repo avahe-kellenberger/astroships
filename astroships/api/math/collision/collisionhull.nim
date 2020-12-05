@@ -12,6 +12,11 @@ import
   ../circle,
   ../polygon
 
+export
+  vector2,
+  circle,
+  polygon
+
 type
   CollisionHullKind* = enum
     chkCirle
@@ -45,6 +50,13 @@ proc getBounds*(this: CollisionHull): Rectangle =
       this.bounds = this.polygon.getBounds()
 
   return this.bounds
+
+proc getArea*(this: CollisionHull): float =
+  case this.kind:
+  of chkPolygon:
+    return this.polygon.getArea()
+  of chkCirle:
+    return this.circle.getArea()
 
 template width*(this: CollisionHull): float = this.getBounds().width
 template height*(this: CollisionHull): float = this.getBounds().height
@@ -144,6 +156,13 @@ func getFarthest*(this: CollisionHull, direction: Vector2): seq[Vector2] =
     return @[this.circle.center + direction.normalize(this.circle.radius)];
   of chkPolygon:
     return this.polygon.polygonGetFarthest(direction)
+
+proc rotate*(this: CollisionHull, deltaRotation: float) =
+  case this.kind:
+  of chkCirle:
+    return
+  of chkPolygon:
+    this.polygon.rotate(deltaRotation)
 
 proc render*(this: CollisionHull, offset: Vector2) =
   case this.kind:

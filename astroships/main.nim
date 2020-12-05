@@ -4,7 +4,9 @@ import random
 import
   api,
   objects/explosion as exp,
-  objects/player as plyr
+  objects/player as plyr,
+  gamelayer,
+  api/material
 
 # Random is used in different modules,
 # and needs to be initialized globally.
@@ -31,7 +33,7 @@ var
 proc collisionListener(objA, objB: Entity, res: CollisionResult) =
   collision = true
 
-layer = newPhysicsLayer(newSpatialGrid(windowWidth, windowHeight, 88))
+layer = newGameLayer(newSpatialGrid(windowWidth, windowHeight, 88))
 layer.addCollisionListener(collisionListener)
 
 let
@@ -49,7 +51,7 @@ proc gameInit() =
   control.debug = true
 
   player = newPlayer(400, 400)
-  rectObj = newEntity(loPhysics, 200, 115)
+  rectObj = newEntity(loPhysics, ROCK, 200, 115)
   let myRect = newPolygon([
     initVector2(-25, -25),
     initVector2(25, -25),
@@ -58,6 +60,7 @@ proc gameInit() =
   ])
 
   rectObj.collisionHull = newPolygonCollisionHull(myRect)
+
   layer.add(rectObj)
   layer.add(explosion)
   layer.add(player)

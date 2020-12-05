@@ -14,6 +14,7 @@ suite "spatialgrid":
   test "Add and query an object":
     var obj = newEntity(
       flags = loPhysics,
+      material = NULL,
       x = 45,
       y = 85,
     )

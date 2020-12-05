@@ -1,6 +1,7 @@
 import sequtils
 import nico
 import ../api/animatedentity
+import ../api/material
 
 export animatedentity
 
@@ -32,6 +33,7 @@ proc newExplosion*(x, y: int): Explosion =
   result =
     Explosion(
       spritesheetIndex: spritesheetIndex,
+      material: NULL,
       center: initVector2(x, y),
       spriteWidth: spriteWidth,
       spriteHeight: spriteHeight

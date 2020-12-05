@@ -8,12 +8,14 @@ import
 
 export
   layer,
-  entity
+  entity,
+  sgrid,
+  sat
 
 type
   CollisionListener* = proc(collisionOwner, collided: Entity, result: CollisionResult)
   PhysicsLayer* = ref object of Layer
-    spatialGrid: SpatialGrid
+    spatialGrid*: SpatialGrid
     collisionListeners: seq[CollisionListener]
 
 proc newPhysicsLayer*(grid: SpatialGrid, z: float = 1.0): PhysicsLayer =
@@ -62,14 +64,15 @@ proc detectCollisions(this: PhysicsLayer, deltaTime: float) =
         moveVectorB = objB.velocity * deltaTime
 
       # Get collision result.
-      let collisionResult = sat.collides(
-        locA,
-        hullA,
-        moveVectorA,
-        locB,
-        hullB,
-        moveVectorB
-      )
+      let collisionResult =
+        sat.collides(
+          locA,
+          hullA,
+          moveVectorA,
+          locB,
+          hullB,
+          moveVectorB
+        )
 
       if collisionResult == nil:
         continue

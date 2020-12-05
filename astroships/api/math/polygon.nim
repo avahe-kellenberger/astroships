@@ -20,6 +20,7 @@ type Polygon* = ref object
   bounds: Rectangle
   center: Option[Vector2]
   clockwise: Option[bool]
+  area: Option[float]
 
 proc newPolygon*(vertices: openArray[Vector2]): Polygon =
   if vertices.len < 3:
@@ -29,6 +30,8 @@ proc newPolygon*(vertices: openArray[Vector2]): Polygon =
 func len*(this: Polygon): int = this.vertices.len
 
 func `[]`*(this: Polygon, i: int): Vector2 = this.vertices[i]
+proc `[]=`*(this: var Polygon, i: int, vector: Vector2) =
+  this.vertices[i] = vector
 
 iterator items*(this: Polygon): Vector2 =
   for v in this.vertices:
@@ -141,15 +144,28 @@ func getBounds*(this: Polygon): Rectangle =
     )
   return this.bounds
 
+func getArea*(this: Polygon): float =
+  if this.area.isNone:
+    var
+      area: float = 0
+      lastV: Vector2 = this[this.vertices.high]
+
+    for i, v in this:
+      let cross = lastV.crossProduct(v)
+      area += cross
+      lastV = v
+
+    this.area = abs(area * 0.5).option
+
+  return this.area.get
+
 func center*(this: Polygon): Vector2 =
   ## Gets the centroid of the Polygon.
   if this.center.isSome:
     return this.center.get
 
   var
-    area = 0f
-    x = 0f
-    y = 0f
+    area, x, y: float
     lastV = this[this.vertices.high]
 
   for i, v in this:
@@ -297,6 +313,16 @@ proc isClockwise*(this: Polygon): bool =
       lastV = currV
     this.clockwise = (sum < 0.0).option
   return this.clockwise.get
+
+proc rotate*(this: var Polygon, deltaRotation: float) =
+  if deltaRotation == 0.0:
+    return
+
+  let center = center(this)
+  for i, vertex in this:
+    this[i] = vertex.rotateAround(deltaRotation, center)
+
+  this.center = none(Vector2)
 
 proc render*(this: Polygon, offset: Vector2 = VectorZero) =
   for i, v in this:
