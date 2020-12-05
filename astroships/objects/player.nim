@@ -3,6 +3,7 @@ import nico
 import ../api/animatedentity
 import ../api/math/vector2
 import ../api/math/collision/collisionhull
+import ../api/material
 
 export animatedentity
 
@@ -38,6 +39,7 @@ proc newPlayer*(x, y: int): Player =
     Player(
       spritesheetIndex: spritesheetIndex,
       center: initVector2(x, y),
+      material: METAL,
       spriteWidth: spriteWidth,
       spriteHeight: spriteHeight,
       acceleration: 800.0,

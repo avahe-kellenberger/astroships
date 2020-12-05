@@ -51,6 +51,13 @@ proc getBounds*(this: CollisionHull): Rectangle =
 
   return this.bounds
 
+proc getArea*(this: CollisionHull): float =
+  case this.kind:
+  of chkPolygon:
+    return this.polygon.getArea()
+  of chkCirle:
+    return this.circle.getArea()
+
 template width*(this: CollisionHull): float = this.getBounds().width
 template height*(this: CollisionHull): float = this.getBounds().height
 
