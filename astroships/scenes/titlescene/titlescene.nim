@@ -36,5 +36,16 @@ proc newTitleScene*: TitleScene =
           foo.addLayer(foo.aboutLayer)
   )
 
-  result.addLayer(result.titleLayer)
+  ## Back Listeners
+  result.aboutLayer.addBackClickedListener(
+      proc =
+          foo.removeAllLayers()
+          foo.addLayer(foo.titleLayer)
+  )
+  result.optionsLayer.addBackClickedListener(
+      proc =
+          foo.removeAllLayers()
+          foo.addLayer(foo.titleLayer)
+  )
 
+  result.addLayer(result.titleLayer)

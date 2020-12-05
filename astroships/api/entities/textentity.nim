@@ -1,6 +1,7 @@
 import nico, nico/utils
 import ../entity
 import ../math/rectangle
+import ../../colors
 
 type TextAlign* = enum
   taLeft
@@ -12,7 +13,7 @@ type TextEntity* = ref object of Entity
   width, height: int
   align*: TextAlign
   scale*: int
-  color*: int
+  color*: NamedColor
   outline*: bool
   outlineColor*: int
   containsMouse*: bool
@@ -24,7 +25,8 @@ proc newTextEntity*(
   text: string,
   x, y: float,
   align: TextAlign = taLeft,
-  scale, color: int = 1,
+  scale: int = 1,
+  color: NamedColor = ncWhite,
   outline: bool = false,
   outlineColor: int = 1
 ): TextEntity =
@@ -58,7 +60,7 @@ func containsPoint*(this: TextEntity, x, y: float): bool =
 
 method render*(this: TextEntity) =
   #echo "X: " & $this.x & " Y: " & $this.y
-  setColor(this.color)
+  setColor(ord(this.color))
   setOutlineColor(this.outlineColor)
   case this.align:
   of taLeft:

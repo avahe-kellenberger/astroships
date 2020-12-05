@@ -1,10 +1,13 @@
 import nico
 import random
+import sdl2
 
 import
   api,
   objects/explosion as exp,
-  objects/player as plyr
+  objects/player as plyr,
+  colors,
+  dimensions
 import scenes/titlescene/titlescene
 
 # Random is used in different modules,
@@ -15,6 +18,7 @@ const
   windowWidth = 640
   windowHeight = 480
   windowScale = 1
+  
 
 nico.init("nico", "ASTROSHIPS")
 nico.createWindow("ASTROSHIPS", windowWidth, windowHeight, windowScale)
@@ -23,6 +27,10 @@ integerScale(true)
 
 var
   astroPal = loadPaletteFromGPL("pal/astroships.gpl")
+
+loadFont(2, "fontfix.png")
+
+setFont(2)
 
 ## Create Scene
 var currentScene: Scene

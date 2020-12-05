@@ -2,15 +2,18 @@ import nico
 import
   ../../api,
   ../../api/layer,
-  ../../api/entities/textentity
+  ../../colors,
+  ../../dimensions,
+  ../../api/entities/textentity,
+  ../../api/entities/sliderentity
+  
 
-const
-  windowWidth = 640
-  windowHeight = 480
 
 type OptionsLayer* = ref object of Layer
     header: TextEntity
     menu: seq[TextEntity]
+    itemBack: TextEntity
+    optionA: SliderEntity
 
 proc newOptionsLayer*: OptionsLayer = 
   result = OptionsLayer()
@@ -24,7 +27,7 @@ proc newOptionsLayer*: OptionsLayer =
       40,
       taCenter,
       textScale,
-      1,
+      ncWhite,
       false,
       3
   )
@@ -40,8 +43,36 @@ proc newOptionsLayer*: OptionsLayer =
       yOffset,
       taCenter,
       menuScale,
-      1,
+      ncWhite,
       false,
       3
     )
   result.add(subtitleText)
+
+  ## BACK
+  let itemBack = newTextEntity(
+      "<<<",
+      windowWidth / 2,
+      yOffset + 180,
+      taCenter,
+      2,
+      ncWhite,
+      false,
+      3
+    )
+  result.add(itemBack)
+  itemBack.addMouseEnterListener(proc = itemBack.color = ncRed)
+  itemBack.addMouseLeaveListener(proc = itemBack.color = ncWhite)
+  itemBack.addMouseClickListener(
+    proc =
+        echo "BACK"
+  )
+  result.itemBack = itemBack
+
+  let optionA = newSliderEntity(int(windowWidth/2), 200, 300, 36, 0, 100, 50)
+  result.add(optionA)
+  result.optionA = optionA
+
+
+proc addBackClickedListener*(this: OptionsLayer, listener: proc()) =
+  this.itemBack.addMouseClickListener(listener)

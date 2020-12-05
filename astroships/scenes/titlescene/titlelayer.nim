@@ -1,11 +1,9 @@
 import nico
 import
   ../../api/layer,
-  ../../api/entities/textentity
-
-const
-  windowWidth = 640
-  windowHeight = 480
+  ../../api/entities/textentity,
+  ../../colors,
+  ../../dimensions
 
 type TitleLayer* = ref object of Layer
     header: TextEntity
@@ -26,7 +24,7 @@ proc newTitleLayer*: TitleLayer =
       40,
       taCenter,
       textScale,
-      1,
+      ncWhite,
       false,
       3
   )
@@ -37,18 +35,18 @@ proc newTitleLayer*: TitleLayer =
 
   ## New Game
   let itemNewGame = newTextEntity(
-      "NEW GAME",
+      "PLAY",
       windowWidth / 2,
       yOffset,
       taCenter,
       menuScale,
-      1,
+      ncWhite,
       false,
       3
     )
   result.add(itemNewGame)
-  itemNewGame.addMouseEnterListener(proc = itemNewGame.color = 3)
-  itemNewGame.addMouseLeaveListener(proc = itemNewGame.color = 1)
+  itemNewGame.addMouseEnterListener(proc = itemNewGame.color = ncRed)
+  itemNewGame.addMouseLeaveListener(proc = itemNewGame.color = ncWhite)
   itemNewGame.addMouseClickListener(
     proc =
         echo "NEW GAME"
@@ -62,13 +60,13 @@ proc newTitleLayer*: TitleLayer =
       yOffset + 90,
       taCenter,
       menuScale,
-      1,
+      ncWhite,
       false,
       3
     )
   result.add(itemOptions)
-  itemOptions.addMouseEnterListener(proc = itemOptions.color = 3)
-  itemOptions.addMouseLeaveListener(proc = itemOptions.color = 1)
+  itemOptions.addMouseEnterListener(proc = itemOptions.color = ncRed)
+  itemOptions.addMouseLeaveListener(proc = itemOptions.color = ncWhite)
   itemOptions.addMouseClickListener(
     proc =
         echo "OPTIONS"
@@ -82,13 +80,13 @@ proc newTitleLayer*: TitleLayer =
       yOffset + 180,
       taCenter,
       menuScale,
-      1,
+      ncWhite,
       false,
       3
     )
   result.add(itemAbout)
-  itemAbout.addMouseEnterListener(proc = itemAbout.color = 3)
-  itemAbout.addMouseLeaveListener(proc = itemAbout.color = 1)
+  itemAbout.addMouseEnterListener(proc = itemAbout.color = ncRed)
+  itemAbout.addMouseLeaveListener(proc = itemAbout.color = ncWhite)
   itemAbout.addMouseClickListener(
     proc =
         echo "ABOUT"
