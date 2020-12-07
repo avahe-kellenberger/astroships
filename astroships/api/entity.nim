@@ -33,7 +33,7 @@ type Entity* = ref object of RootObj
 
 proc newEntity*(
   flags: LayerObjectFlags,
-  material: Material,
+  material: Material = NULL,
   x, y: float = 0.0
 ): Entity =
   result = Entity(

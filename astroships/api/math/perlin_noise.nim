@@ -24,7 +24,7 @@ proc newPerlinGrid*(width, height: int): PerlinGrid =
   for x in 0..result.width:
     for y in 0..result.height:
       ## These vectors are used for random directional purposes only.
-      result.gradientVectors[x][y] = 
+      result.gradientVectors[x][y] =
         initVector2(
           rand(-1..1),
           rand(-1..1)
@@ -34,7 +34,7 @@ template getWidth*(this: PerlinGrid): int =
   ## @return {int} The width of the grid.
   this.width
 
-template getHeight*(this: PerlinGrid): int = 
+template getHeight*(this: PerlinGrid): int =
   ## @return {int} The height of the grid.
   this.height
 
@@ -74,7 +74,7 @@ func getNoise*(this: PerlinGrid, x, y: float): float =
     sx = smootherStep((x - x0).float)
     sy = smootherStep((y - y0).float)
 
-  let 
+  let
     a = lerp(
       this.getGridGradientDot(x0, y0, x, y),
       this.getGridGradientDot(x1, y0, x, y),
@@ -96,7 +96,7 @@ func getNoiseAtOctaves*(this: PerlinGrid, x, y, persistence: float, octaves: int
   ## @param {int} octaves The number of octaves to sample from.
   ## should have on noise generation.
   ## @return {float}
-  var 
+  var
     ## The period at which data is sampled.
     total = 0f
     ## The range in which the result can lie.
