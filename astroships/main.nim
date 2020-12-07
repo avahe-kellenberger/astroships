@@ -24,6 +24,7 @@ integerScale(true)
 
 var
   astroPal = loadPaletteFromGPL("pal/astroships.gpl")
+  camera: Camera
   layer: PhysicsLayer
   rectObj: Entity
   player: Player
@@ -33,6 +34,7 @@ var
 proc collisionListener(objA, objB: Entity, res: CollisionResult) =
   collision = true
 
+# camera = newCamera(400.0, 400.0, 256, 256)
 layer = newGameLayer(newSpatialGrid(windowWidth, windowHeight, 88))
 layer.addCollisionListener(collisionListener)
 
@@ -50,7 +52,8 @@ proc gameInit() =
 
   control.debug = true
 
-  player = newPlayer(400, 400)
+  player = newPlayer(control, 400, 400)
+  camera = newCamera(player, control)
   rectObj = newEntity(loPhysics, ROCK, 200, 115)
   let myRect = newPolygon([
     initVector2(-25, -25),
@@ -68,10 +71,22 @@ proc gameInit() =
 proc gameUpdate(dt: float32) =
   collision = false
   control.update(dt)
+  camera.update(dt)
   layer.update(dt)
 
 proc gameDraw() =
   cls()
+  # TODO:
+  # setCamera doesn't work like a matrix transform, how it does with the html canvas.
+  # We may need to offset all entities by the camera location,
+  # just for the rendering pass.
+  # Hopefully we can find an elegant solution.
+  #
+  # The above might be all wrong, do more testing of the built in camera.
+  #
+  # The offset of camera is in the wrong direction.
+
+  setCamera(camera.x - windowWidth div 2, camera.y - windowHeight div 2)
   setColor(0)
   rectfill(0, 0, windowWidth, windowHeight)
 

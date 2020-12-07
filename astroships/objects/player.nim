@@ -1,6 +1,7 @@
 import sequtils
 import nico
 import ../api/animatedentity
+import ../api/controller as cntrllr
 import ../api/math/vector2
 import ../api/math/collision/collisionhull
 import ../api/material
@@ -24,6 +25,7 @@ type
     Level
 
   Player* = ref object of AnimatedEntity
+    controller: Controller
     level*: Natural
     acceleration: float
     maxSpeed: float
@@ -31,12 +33,13 @@ type
 # Implicitly convert enum names to a string.
 converter animToString*(animation: PlayerAnim): string = $animation
 
-proc newPlayer*(x, y: int): Player =
+proc newPlayer*(controller: Controller, x, y: int): Player =
   # Lazy init our spritesheetIndex because nico needs to load first.
   if spritesheetIndex < 0:
     spritesheetIndex = loadSpritesheet(spritesheet, spriteWidth, spriteHeight)
   result =
     Player(
+      controller: controller,
       spritesheetIndex: spritesheetIndex,
       center: initVector2(x, y),
       material: METAL,
@@ -72,7 +75,7 @@ method update*(this: Player, deltaTime: float) =
   procCall AnimatedEntity(this).update(deltaTime)
 
   let
-    mouseLoc = toVector2(mouse())
+    mouseLoc = this.controller.mouse.location
     direction = (mouseLoc - this.center).normalize()
     angleToMouse = direction.getAngleRadians()
 

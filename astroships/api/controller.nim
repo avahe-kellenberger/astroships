@@ -25,7 +25,12 @@ proc newController*(): Controller =
 
 proc update*(this: Controller, deltaTime: float) =
   # Mouse Coordinates
-  this.mouse.location = toVector2(mouse())
+  let mouseScreenCoords = mouse()
+  let cameraLoc = getCamera()
+  this.mouse.location = initVector2(
+    mouseScreenCoords[0] + cameraLoc[0],
+    mouseScreenCoords[1] + cameraLoc[1]
+  )
 
   # Mouse Button
   this.mouse.isPressed = mousebtn(0)
