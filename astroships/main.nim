@@ -5,6 +5,7 @@ import
   api,
   objects/explosion as exp,
   objects/player as plyr,
+  objects/laser as lsr,
   gamelayer,
   api/material
 
@@ -28,13 +29,13 @@ var
   layer: PhysicsLayer
   rectObj: Entity
   player: Player
+  laser: Laser
   collision = false
   control: Controller = newController()
 
 proc collisionListener(objA, objB: Entity, res: CollisionResult) =
   collision = true
 
-# camera = newCamera(400.0, 400.0, 256, 256)
 layer = newGameLayer(newSpatialGrid(windowWidth, windowHeight, 88))
 layer.addCollisionListener(collisionListener)
 
@@ -53,6 +54,7 @@ proc gameInit() =
   control.debug = true
 
   player = newPlayer(control, 400, 400)
+  laser = newLaser(200, 200)
   camera = newCamera(player, control)
   rectObj = newEntity(loPhysics, ROCK, 200, 115)
   let myRect = newPolygon([
@@ -67,6 +69,7 @@ proc gameInit() =
   layer.add(rectObj)
   layer.add(explosion)
   layer.add(player)
+  layer.add(laser)
 
 proc gameUpdate(dt: float32) =
   collision = false
@@ -76,16 +79,6 @@ proc gameUpdate(dt: float32) =
 
 proc gameDraw() =
   cls()
-  # TODO:
-  # setCamera doesn't work like a matrix transform, how it does with the html canvas.
-  # We may need to offset all entities by the camera location,
-  # just for the rendering pass.
-  # Hopefully we can find an elegant solution.
-  #
-  # The above might be all wrong, do more testing of the built in camera.
-  #
-  # The offset of camera is in the wrong direction.
-
   setCamera(camera.x - windowWidth div 2, camera.y - windowHeight div 2)
   setColor(0)
   rectfill(0, 0, windowWidth, windowHeight)

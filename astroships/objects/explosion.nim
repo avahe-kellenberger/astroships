@@ -46,10 +46,3 @@ proc newExplosion*(x, y: int): Explosion =
   # Be sure to set the animation when finished.
   result.setAnimation(Explode)
 
-method render*(this: Explosion) =
-  procCall AnimatedEntity(this).render()
-
-  if this.collisionHull != nil:
-    setColor(1)
-    this.collisionHull.render(this.center)
-
