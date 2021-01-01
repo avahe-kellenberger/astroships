@@ -19,11 +19,11 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - name: Setup Nim environment (1.4.0)
+      - name: Setup Nim environment (1.4.2)
         uses: jiro4989/setup-nim-action@v1
         with:
-          nim-version: 1.4.0
-    
+          nim-version: 1.4.2
+
       - name: Fix apt packages
         run: |
           # see. https://github.com/actions/virtual-environments/issues/675
@@ -35,7 +35,7 @@ jobs:
 
       - name: Install packages
         run: nimble install -Y
-        
+
       - name: Build
         run: |
           nimble release
