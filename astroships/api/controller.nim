@@ -10,7 +10,9 @@ type
 
   Controller* = ref object of RootObj
     accelerating*: bool
+    decelerating*: bool
     accelerateKey*: Keycode
+    decelerateKey*: Keycode
     mouse*: Mouse
     debug*: bool
     debugFontScale*: Positive
@@ -20,6 +22,7 @@ proc newController*(): Controller =
     mouse: Mouse(),
     accelerating: false,
     accelerateKey: Keycode(K_w),
+    decelerateKey: Keycode(K_s),
     debugFontScale: 1
   )
 
@@ -36,8 +39,9 @@ proc update*(this: Controller, deltaTime: float) =
   this.mouse.isPressed = mousebtn(0)
   this.mouse.justPressed = mousebtnp(0)
 
-  # Acceleration Key
+  # Control Keys
   this.accelerating = key(this.accelerateKey)
+  this.decelerating = key(this.decelerateKey)
 
 proc debugPrint*(this: Controller, text: string, x: int, y: int) =
   print(
@@ -51,7 +55,7 @@ proc render*(this: Controller) =
   if not this.debug:
     return
 
-  ## Mouse down
+  # Mouse down
   setColor(1)
   this.debugPrint("mouse down:", 10, 20)
   if this.mouse.isPressed:
@@ -61,7 +65,7 @@ proc render*(this: Controller) =
     setColor(2)
     this.debugPrint("false", 80, 20)
 
-  ## Mouse just down
+  # Mouse just down
   setColor(1)
   this.debugPrint("mouse just down:", 10, 30)
   case this.mouse.justPressed:
@@ -72,16 +76,17 @@ proc render*(this: Controller) =
     setColor(2)
     this.debugPrint("false", 80, 30)
 
+  # Mouse X Coordinate
   setColor(1)
-  ## Mouse X Coordinate
   this.debugPrint("mouse x:", 10, 40)
   this.debugPrint($this.mouse.location.x, 80, 40)
 
-  ## Mouse Y Coordinate
+  # Mouse Y Coordinate
   this.debugPrint("mouse y:", 10, 50)
   this.debugPrint($this.mouse.location.y, 80, 50)
 
-  ## Accelerating
+  # Accelerating
+  setColor(1)
   this.debugPrint("accelerating:", 10, 60)
   case this.accelerating:
   of true:
@@ -90,3 +95,14 @@ proc render*(this: Controller) =
   of false:
     setColor(2)
     this.debugPrint("false", 80, 60)
+
+  # Decelerating
+  setColor(1)
+  this.debugPrint("decelerating:", 10, 70)
+  case this.decelerating:
+  of true:
+    setColor(10)
+    this.debugPrint("true", 80, 70)
+  of false:
+    setColor(2)
+    this.debugPrint("false", 80, 70)

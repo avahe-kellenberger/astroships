@@ -12,6 +12,7 @@ const
   spritesheet = "ship.png"
   spriteWidth = 16
   spriteHeight = 16
+  decelerationMultiplier = 1.3
 
 var spritesheetIndex = -1
 
@@ -52,17 +53,15 @@ proc newPlayer*(controller: Controller, x, y: int): Player =
 
   # Add any animations we need.
   result.addAnimation(Level, levelAnimation)
-
   # Be sure to set the animation when finished.
   result.setAnimation(Level)
 
-  # Default player collision hull.
-  var poly = newPolygon(@[
+  var playerCollisionShape = newPolygon(@[
     initVector2(-8, -8),
     initVector2(-8, 8),
     initVector2(8, 0)
   ])
-  result.collisionHull = newPolygonCollisionHull(poly)
+  result.collisionHull = newPolygonCollisionHull(playerCollisionShape)
 
 method updateCurrentAnimation(this: Player, deltaTime: float) =
   # Player animation is not updated by time.
@@ -82,10 +81,10 @@ method update*(this: Player, deltaTime: float) =
   let deltaRotation = angleToMouse - this.rotation
   this.rotate(deltaRotation)
 
-  if key(K_w):
+  if this.controller.accelerating:
     this.velocity = (
       this.velocity + (direction * this.acceleration * deltaTime)
      ).maxMagnitude(this.maxSpeed)
-  elif key(K_s):
-    this.velocity -= this.velocity * deltaTime * 1.3
+  elif this.controller.decelerating:
+    this.velocity -= this.velocity * deltaTime * decelerationMultiplier
 
